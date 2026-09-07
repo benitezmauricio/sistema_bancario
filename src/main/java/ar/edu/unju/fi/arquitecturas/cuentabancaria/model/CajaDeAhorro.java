@@ -2,6 +2,7 @@ package ar.edu.unju.fi.arquitecturas.cuentabancaria.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Column;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -21,11 +22,14 @@ import java.time.Instant;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name="cajas_de_ahorro")
+@Table(name="caja_ahorro")
 @PrimaryKeyJoinColumn(name="cuenta_id")
 public class CajaDeAhorro extends CuentaBancaria {
-    private Integer cupo_limite;
-    private float interes_anual;
+    @Column(name = "cupo_limite")
+    private Integer cupoLimite;
+
+    @Column(name = "interes_anual")
+    private float interesAnual;
 
     @CreatedDate
     private Instant createdDate;

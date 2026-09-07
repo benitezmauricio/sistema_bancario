@@ -21,7 +21,7 @@ import java.time.Instant;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name="cuentas_corrientes")
+@Table(name="cuenta_corriente")
 @PrimaryKeyJoinColumn(name="cuenta_id")
 public class CuentaCorriente extends CuentaBancaria {
     private float margen;

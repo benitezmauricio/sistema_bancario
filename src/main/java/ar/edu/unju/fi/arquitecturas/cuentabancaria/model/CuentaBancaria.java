@@ -18,7 +18,7 @@ import java.time.Instant;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "cuentas_bancarias")
+@Table(name = "cuenta_bancaria")
 @Inheritance(strategy = InheritanceType.JOINED)
 
 public abstract class CuentaBancaria {
@@ -35,7 +35,7 @@ public abstract class CuentaBancaria {
 
     @Enumerated(EnumType.STRING)
     @Column(name="estado_cuenta", nullable = false)
-    private EstadoCuenta estado_cuenta;
+    private EstadoCuenta estadoCuenta;
 
     @CreatedDate
     private Instant createdDate;
