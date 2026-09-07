@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ar.edu.unju.fi.arquitecturas</groupId>
-    <artifactId>cuenta-bancaria</artifactId>
+    <artifactId>sistema_bancario</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>cuenta-bancaria</name>
-    <description>cuenta-bancaria</description>
+    <name>sistema_bancario</name>
+    <description>sistema_bancario</description>
     <url/>
     <licenses>
         <license/>
