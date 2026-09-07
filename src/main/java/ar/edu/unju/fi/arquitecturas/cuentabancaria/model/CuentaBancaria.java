@@ -5,6 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.Instant;
 
 @Data
 @NoArgsConstructor
@@ -12,7 +17,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 
 @Entity
-@Table(name = "cuentas_bancarias")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "cuenta_bancaria")
 @Inheritance(strategy = InheritanceType.JOINED)
 
 public abstract class CuentaBancaria {
@@ -29,7 +35,13 @@ public abstract class CuentaBancaria {
 
     @Enumerated(EnumType.STRING)
     @Column(name="estado_cuenta", nullable = false)
-    private EstadoCuenta estado_cuenta;
+    private EstadoCuenta estadoCuenta;
+
+    @CreatedDate
+    private Instant createdDate;
+
+    @LastModifiedDate
+    private Instant lastModifiedDate;
 
     public void deposito(){
     }
