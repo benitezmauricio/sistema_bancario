@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -30,12 +32,20 @@ public class Transaccion {
     private Time hora;
     @Column(nullable = false)
     private float monto;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoTransaccion tipo;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="estado_cuenta", nullable = false)
-    private EstadoTransaccion estado_transaccion;
+    @Column(name = "estado_transaccion", nullable = false)
+    private EstadoTransaccion estadoTransaccion;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "cuenta_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private CuentaBancaria cuenta;
 
     @CreatedDate
     private Instant createdDate;

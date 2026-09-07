@@ -1,10 +1,7 @@
 package ar.edu.unju.fi.arquitecturas.cuentabancaria.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -39,6 +36,12 @@ public class Cliente {
     @Column(nullable = false)
     private String direccion;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "cuenta_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private CuentaBancaria cuenta;
+
     @CreatedDate
     private Instant createdDate;
 
@@ -49,5 +52,3 @@ public class Cliente {
 
     public void registrarCotitular(){}
 }
-
-
