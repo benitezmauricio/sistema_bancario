@@ -37,6 +37,5 @@ public class CajaDeAhorro extends CuentaBancaria {
     @LastModifiedDate
     private Instant lastModifiedDate;
 
-    public void calcularInteres(){
-    }
+    public void calcularInteres(){}
 }
