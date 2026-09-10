@@ -8,7 +8,7 @@ import java.util.List;
 public interface CuentaCorrienteRepository extends JpaRepository<CuentaCorriente, Long> {
 
     // Encontrar cuentas corrientes con margen menor a un valor dado
-    List<CuentaCorriente> findByMargenLessThan(float margen);
+    List<CuentaCorriente> findByMargenLessThan(Float margen);
 
     List<CuentaCorriente> findByAliasContainingIgnoreCase(String alias);
 }

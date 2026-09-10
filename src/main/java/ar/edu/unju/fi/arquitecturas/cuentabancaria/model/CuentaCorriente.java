@@ -1,9 +1,6 @@
 package ar.edu.unju.fi.arquitecturas.cuentabancaria.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,21 +11,26 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name="cuenta_corriente")
 @PrimaryKeyJoinColumn(name="cuenta_id")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CuentaCorriente extends CuentaBancaria {
-    private float margen;
-    private float costo_comision;
+    @Column(nullable = false)
+    private Float margen;
+
+    @Column(nullable = false, name = "costo_comision")
+    private Float costoComision;
+
     @CreatedDate
     private Instant createdDate;
 
     @LastModifiedDate
     private Instant lastModifiedDate;
+
+    public void calcularComision(){}
+    public void aplicarComision(){}
 }

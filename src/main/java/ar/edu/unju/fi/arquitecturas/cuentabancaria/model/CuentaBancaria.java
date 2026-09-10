@@ -11,16 +11,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
-
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "cuenta_bancaria")
 @Inheritance(strategy = InheritanceType.JOINED)
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public abstract class CuentaBancaria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +25,12 @@ public abstract class CuentaBancaria {
 
     @Column(nullable = false, unique = true)
     private Integer cbu;
+
     @Column(nullable = false, unique = true, length=50)
     private String alias;
+
     @Column(nullable = false)
-    private float saldo;
+    private Float saldo;
 
     @Enumerated(EnumType.STRING)
     @Column(name="estado_cuenta", nullable = false)
@@ -43,13 +42,9 @@ public abstract class CuentaBancaria {
     @LastModifiedDate
     private Instant lastModifiedDate;
 
-    public void deposito(){
-    }
-    public void extraccion(){
-    }
-    public void transferencia_Enviada(){
-    }
-    public void transferencia_Recibida(){
-    }
+    public void deposito(){}
+    public void extraccion(){}
+    public void transferencia_Enviada(){}
+    public void transferencia_Recibida(){}
 
 }

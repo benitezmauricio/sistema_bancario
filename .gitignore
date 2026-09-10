@@ -35,6 +35,3 @@ build/
 ### Archivos de entorno y logs ###
 *.log
 .env
-
-###IDE
-.idea/

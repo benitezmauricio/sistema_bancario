@@ -7,7 +7,6 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -15,21 +14,19 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name="caja_ahorro")
 @PrimaryKeyJoinColumn(name="cuenta_id")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CajaDeAhorro extends CuentaBancaria {
-    @Column(name = "cupo_limite")
+    @Column(nullable = false, name = "cupo_limite")
     private Integer cupoLimite;
 
-    @Column(name = "interes_anual")
-    private float interesAnual;
+    @Column(nullable = false, name = "interes_anual")
+    private Float interesAnual;
 
     @CreatedDate
     private Instant createdDate;

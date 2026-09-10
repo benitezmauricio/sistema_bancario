@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CajaDeAhorroRepository extends JpaRepository<CajaDeAhorro, Long> {
 
-    List<CajaDeAhorro> findByInteresAnualGreaterThan(float interesAnual);
+    List<CajaDeAhorro> findByInteresAnualGreaterThan(Float interesAnual);
 
     List<CajaDeAhorro> findByIdGreaterThan(Long id);
 }
