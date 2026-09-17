@@ -1,42 +1,40 @@
-package ar.edu.unju.fi.arquitecturas.cuentabancaria.model;
+package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.sql.Time;
 import java.time.Instant;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "cuenta_bancaria")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-
-public class Transaccion {
-
+public abstract class CuentaBancaria {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private Date fecha;
-    private Time hora;
+    @Column(nullable = false, unique = true)
+    private String cbu;
+
+    @Column(nullable = false, unique = true, length=50)
+    private String alias;
+
     @Column(nullable = false)
-    private float monto;
-    @Column(nullable = false)
-    private TipoTransaccion tipo;
+    private Float saldo;
 
     @Enumerated(EnumType.STRING)
     @Column(name="estado_cuenta", nullable = false)
-    private EstadoTransaccion estado_transaccion;
+    private EstadoCuenta estadoCuenta;
 
     @CreatedDate
     private Instant createdDate;
@@ -44,6 +42,9 @@ public class Transaccion {
     @LastModifiedDate
     private Instant lastModifiedDate;
 
-    public void consultarTransaccion() {}
+    public void deposito(){}
+    public void extraccion(){}
+    public void transferencia_Enviada(){}
+    public void transferencia_Recibida(){}
 
 }

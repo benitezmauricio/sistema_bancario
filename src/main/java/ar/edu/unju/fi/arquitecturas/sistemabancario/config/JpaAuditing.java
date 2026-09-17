@@ -1,4 +1,4 @@
-package ar.edu.unju.fi.arquitecturas.cuentabancaria.config;
+package ar.edu.unju.fi.arquitecturas.sistemabancario.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

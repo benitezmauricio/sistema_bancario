@@ -1,4 +1,4 @@
-package ar.edu.unju.fi.arquitecturas.cuentabancaria.model;
+package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -7,6 +7,7 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -21,6 +22,7 @@ import java.time.Instant;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class CajaDeAhorro extends CuentaBancaria {
     @Column(nullable = false, name = "cupo_limite")
     private Integer cupoLimite;

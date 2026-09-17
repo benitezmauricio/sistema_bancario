@@ -1,10 +1,10 @@
-package ar.edu.unju.fi.arquitecturas.cuentabancaria;
+package ar.edu.unju.fi.arquitecturas.sistemabancario;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CuentaBancariaApplicationTests {
+class SistemaBancarioApplicationTests {
 
     @Test
     void contextLoads() {
