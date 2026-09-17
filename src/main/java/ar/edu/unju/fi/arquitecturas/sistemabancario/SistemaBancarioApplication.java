@@ -1,13 +1,13 @@
-package ar.edu.unju.fi.arquitecturas.cuentabancaria;
+package ar.edu.unju.fi.arquitecturas.sistemabancario;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CuentaBancariaApplication {
+public class SistemaBancarioApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CuentaBancariaApplication.class, args);
+        SpringApplication.run(SistemaBancarioApplication.class, args);
     }
 
 }

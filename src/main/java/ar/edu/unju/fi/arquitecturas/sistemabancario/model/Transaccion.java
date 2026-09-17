@@ -1,4 +1,4 @@
-package ar.edu.unju.fi.arquitecturas.cuentabancaria.model;
+package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.sql.Time;
 import java.time.Instant;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -19,26 +21,22 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 
-public class Cliente {
+public class Transaccion {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    private Date fecha;
+    private Time hora;
     @Column(nullable = false)
-    private String nombre;
+    private float monto;
+    @Column(nullable = false)
+    private TipoTransaccion tipo;
 
-    @Column(nullable = false)
-    private Integer cuil;
-
-    @Column(nullable = false)
-    private String mail;
-
-    @Column(nullable = false)
-    private Integer telefono;
-
-    @Column(nullable = false)
-    private String direccion;
+    @Enumerated(EnumType.STRING)
+    @Column(name="estado_cuenta", nullable = false)
+    private EstadoTransaccion estado_transaccion;
 
     @CreatedDate
     private Instant createdDate;
@@ -46,9 +44,6 @@ public class Cliente {
     @LastModifiedDate
     private Instant lastModifiedDate;
 
-    public void registrarCLiente(){}
+    public void consultarTransaccion() {}
 
-    public void registrarCotitular(){}
 }
-
-
