@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -21,10 +22,10 @@ import java.time.Instant;
 public abstract class CuentaBancaria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column(nullable = false, unique = true)
-    private Integer cbu;
+    private String cbu;
 
     @Column(nullable = false, unique = true, length=50)
     private String alias;

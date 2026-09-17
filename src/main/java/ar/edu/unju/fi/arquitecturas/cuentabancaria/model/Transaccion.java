@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.sql.Time;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -24,7 +25,7 @@ public class Transaccion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
+    private UUID id;
 
     private Date fecha;
     private Time hora;
