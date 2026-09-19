@@ -29,14 +29,17 @@ public class Transaccion {
 
     private Date fecha;
     private Time hora;
+
     @Column(nullable = false)
     private float monto;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoTransaccion tipo;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="estado_cuenta", nullable = false)
-    private EstadoTransaccion estado_transaccion;
+    @Column(name="estado_transaccion", nullable = false)
+    private EstadoTransaccion estadoTransaccion;
 
     @CreatedDate
     private Instant createdDate;
@@ -44,6 +47,9 @@ public class Transaccion {
     @LastModifiedDate
     private Instant lastModifiedDate;
 
-    public void consultarTransaccion() {}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cuenta_bancaria_id", nullable = false)
+    private CuentaBancaria cuentaBancaria;
 
+    public void consultarTransaccion() {}
 }

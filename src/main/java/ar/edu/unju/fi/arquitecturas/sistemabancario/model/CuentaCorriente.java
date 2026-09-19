@@ -23,7 +23,7 @@ public class CuentaCorriente extends CuentaBancaria {
     @Column(nullable = false)
     private Float margen;
 
-    @Column(nullable = false, name = "costo_comision")
+    @Column(name = "costo_comision", nullable = false)
     private Float costoComision;
 
     @CreatedDate

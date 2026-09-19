@@ -1,9 +1,7 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,7 +13,8 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "cuenta_bancaria")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class CuentaBancaria {
@@ -23,7 +22,7 @@ public abstract class CuentaBancaria {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length=22)
     private String cbu;
 
     @Column(nullable = false, unique = true, length=50)
@@ -42,9 +41,13 @@ public abstract class CuentaBancaria {
     @LastModifiedDate
     private Instant lastModifiedDate;
 
-    public void deposito(){}
-    public void extraccion(){}
-    public void transferencia_Enviada(){}
-    public void transferencia_Recibida(){}
+    //Atributos referidos a relaciones
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Cliente cliente;
+
+    public void depositar(){}
+    public void extraer(){}
+    public void transferir(){}
 
 }

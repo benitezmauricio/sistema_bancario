@@ -13,4 +13,8 @@ public interface CuentaBancariaRepository extends JpaRepository<CuentaBancaria, 
     Optional<CuentaBancaria> findByEstadoCuenta(EstadoCuenta estadoCuenta);
 
     List<CuentaBancaria> findByAliasContainingIgnoreCase(String alias);
+
+    Optional<CuentaBancaria> findByCbu(String cbu);
+    Optional<CuentaBancaria> findByAlias(String alias);
+    List<CuentaBancaria> findByClienteId(UUID clienteId);
 }
