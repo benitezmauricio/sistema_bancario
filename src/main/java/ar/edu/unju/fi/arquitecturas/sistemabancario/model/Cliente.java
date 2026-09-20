@@ -1,10 +1,7 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,43 +9,51 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * Representa a un cliente del sistema bancario.
+ *
+ * <p>Un cliente puede poseer una o más cuentas bancarias y sus datos
+ * de auditoría se heredan de {@link AuditableEntity}.</p>
+ */
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-@Data
+@Table(name = "clientes")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 
-public class Cliente {
+public class Cliente extends AuditableEntity {
 
+    /** Identificador único del cliente. */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    /** Nombre completo del cliente. */
+    @Column(nullable = false, length = 100)
     private String nombre;
 
-    @Column(nullable = false)
-    private Integer cuil;
+    /** Clave Única de Identificación Laboral del cliente. */
+    @Column(nullable = false, unique = true, length = 11)
+    private String cuil;
 
-    @Column(nullable = false)
+    /** Correo electrónico del cliente. */
+    @Column(nullable = false, unique = true, length = 100)
     private String mail;
 
+    /** Número telefónico de contacto del cliente. */
     @Column(nullable = false)
-    private Integer telefono;
+    private String telefono;
 
+    /** Domicilio declarado por el cliente. */
     @Column(nullable = false)
     private String direccion;
 
-    @CreatedDate
-    private Instant createdDate;
-
-    @LastModifiedDate
-    private Instant lastModifiedDate;
-
+    /** Registra un nuevo cliente en el sistema. */
     public void registrarCLiente(){}
 
+    /** Registra un cotitular asociado al cliente. */
     public void registrarCotitular(){}
 }
-
 

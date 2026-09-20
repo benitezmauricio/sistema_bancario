@@ -15,26 +15,30 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
+/**
+ * Representa una caja de ahorro bancaria.
+ *
+ * <p>Es una especialización de {@link CuentaBancaria} que incorpora
+ * información sobre el cupo límite y el interés anual.</p>
+ */
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-@Table(name="caja_ahorro")
+@Table(name="cajas_ahorro")
 @PrimaryKeyJoinColumn(name="cuenta_id")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+
 public class CajaDeAhorro extends CuentaBancaria {
+    /** Límite operativo de la caja de ahorro. */
     @Column(nullable = false, name = "cupo_limite")
     private Integer cupoLimite;
 
+    /** Tasa de interés anual aplicable a la cuenta. */
     @Column(nullable = false, name = "interes_anual")
     private Float interesAnual;
 
-    @CreatedDate
-    private Instant createdDate;
 
-    @LastModifiedDate
-    private Instant lastModifiedDate;
-
+    /** Calcula el interés generado por la caja de ahorro. */
     public void calcularInteres(){}
 }
