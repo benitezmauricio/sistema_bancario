@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public class AuditableEntity {
+public abstract class AuditableEntity {
     /**
      * Fecha y hora en la que la entidad fue persistida por primera vez.
      * Gestionado automáticamente por Spring Data JPA.
