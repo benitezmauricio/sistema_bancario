@@ -16,5 +16,9 @@ public interface CuentaBancariaRepository extends JpaRepository<CuentaBancaria, 
 
     Optional<CuentaBancaria> findByCbu(String cbu);
     Optional<CuentaBancaria> findByAlias(String alias);
-    List<CuentaBancaria> findByClienteId(UUID clienteId);
+
+    List<CuentaBancaria> findByTitularId(UUID titularId);
+
+    // buscar cuentas donde un cliente figure como cotitular
+    List<CuentaBancaria> findByCotitulares_Id(UUID cotitularId);
 }

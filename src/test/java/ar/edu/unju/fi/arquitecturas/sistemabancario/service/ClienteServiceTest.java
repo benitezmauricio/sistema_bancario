@@ -35,9 +35,9 @@ public class ClienteServiceTest {
         Cliente clienteEsperado = Cliente.builder()
                 .id(clienteId)
                 .nombre("José Zapana")
-                .cuil(20351234)
+                .cuil("20351234")
                 .mail("jose@email.com")
-                .telefono(12345678)
+                .telefono("12345678")
                 .direccion("Calle Falsa 123")
                 .build();
 
@@ -74,9 +74,9 @@ public class ClienteServiceTest {
         // 1-ARRANGE
         Cliente nuevoCliente = Cliente.builder()
                 .nombre("Carlos López")
-                .cuil(20323334)
+                .cuil("20323334")
                 .mail("carlos@email.com")
-                .telefono(12345678)
+                .telefono("12345678")
                 .direccion("Calle Falsa 123")
                 .build();
 
@@ -84,9 +84,9 @@ public class ClienteServiceTest {
         Cliente clientePersistido = Cliente.builder()
                 .id(clienteId)
                 .nombre("Carlos López")
-                .cuil(20323334)
+                .cuil("20323334")
                 .mail("carlos@email.com")
-                .telefono(12345678)
+                .telefono("12345678")
                 .direccion("Calle Falsa 123")
                 .build();
 
@@ -109,9 +109,9 @@ public class ClienteServiceTest {
         // 1-ARRANGE
         Cliente duplicado = Cliente.builder()
                 .nombre("Carlos López")
-                .cuil(20323334)
+                .cuil("20323334")
                 .mail("carlos@email.com")
-                .telefono(12345678)
+                .telefono("12345678")
                 .direccion("Calle Falsa 123")
                 .build();
 

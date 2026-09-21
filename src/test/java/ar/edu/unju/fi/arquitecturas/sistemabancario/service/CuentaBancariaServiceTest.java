@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,7 +48,7 @@ public class CuentaBancariaServiceTest {
         CajaDeAhorro cuenta = new CajaDeAhorro();
         cuenta.setCbu("0000003100000000000001");
         cuenta.setAlias("JUAN.BANCO");
-        cuenta.setSaldo(1500f);
+        cuenta.setSaldo(new BigDecimal("1500.00"));
         cuenta.setEstadoCuenta(EstadoCuenta.ACTIVA);
 
         when(clienteRepository.findById(clienteId)).thenReturn(Optional.of(cliente));
@@ -61,7 +62,7 @@ public class CuentaBancariaServiceTest {
         // 3-ASSERT (verificar resultados)
         assertNotNull(resultado);
         assertEquals("JUAN.BANCO", resultado.getAlias());
-        assertEquals(cliente, resultado.getCliente());
+        assertEquals(cliente, resultado.getTitular());
         verify(clienteRepository, times(1)).findById(clienteId);
         verify(cuentaBancariaRepository, times(1)).save(cuenta);
     }

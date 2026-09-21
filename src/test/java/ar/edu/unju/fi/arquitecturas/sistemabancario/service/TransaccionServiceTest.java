@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,18 +43,18 @@ public class TransaccionServiceTest {
         UUID cuentaId = UUID.randomUUID();
         CajaDeAhorro cuenta = new CajaDeAhorro();
         cuenta.setId(cuentaId);
-        cuenta.setSaldo(100f);
+        cuenta.setSaldo(new BigDecimal("100.00"));
 
         when(cuentaBancariaRepository.findById(cuentaId)).thenReturn(Optional.of(cuenta));
         when(cuentaBancariaRepository.save(any(CuentaBancaria.class))).thenReturn(cuenta);
         when(transaccionRepository.save(any(Transaccion.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // 2-ACT (depositar 50)
-        Transaccion resultado = transaccionService.realizarDeposito(cuentaId, 50f);
+        Transaccion resultado = transaccionService.realizarDeposito(cuentaId, new BigDecimal("50.00"));
 
         // 3-ASSERT (verificar que el saldo subio a 150)
         assertNotNull(resultado);
-        assertEquals(150f, cuenta.getSaldo());
+        assertEquals(new BigDecimal("150.00"), cuenta.getSaldo());
         assertEquals(TipoTransaccion.DEPOSITO, resultado.getTipo());
         assertEquals(EstadoTransaccion.COMPLETADA, resultado.getEstadoTransaccion());
         verify(cuentaBancariaRepository, times(1)).save(cuenta);
@@ -67,12 +68,12 @@ public class TransaccionServiceTest {
         UUID cuentaId = UUID.randomUUID();
         CajaDeAhorro cuenta = new CajaDeAhorro();
         cuenta.setId(cuentaId);
-        cuenta.setSaldo(50f);
+        cuenta.setSaldo(new BigDecimal("50.00"));
 
         when(cuentaBancariaRepository.findById(cuentaId)).thenReturn(Optional.of(cuenta));
 
         // 2-ACT y 3-ASSERT (extraer 200 debe fallar)
-        assertThrows(RuntimeException.class, () -> transaccionService.realizarExtraccion(cuentaId, 200f));
+        assertThrows(RuntimeException.class, () -> transaccionService.realizarExtraccion(cuentaId, new BigDecimal("200.00")));
         verify(cuentaBancariaRepository, never()).save(any(CuentaBancaria.class));
         verify(transaccionRepository, never()).save(any(Transaccion.class));
     }
@@ -86,21 +87,21 @@ public class TransaccionServiceTest {
 
         CajaDeAhorro origen = new CajaDeAhorro();
         origen.setId(origenId);
-        origen.setSaldo(500f);
+        origen.setSaldo(new BigDecimal("500.00"));
 
         CajaDeAhorro destino = new CajaDeAhorro();
         destino.setId(destinoId);
-        destino.setSaldo(100f);
+        destino.setSaldo(new BigDecimal("100.00"));
 
         when(cuentaBancariaRepository.findById(origenId)).thenReturn(Optional.of(origen));
         when(cuentaBancariaRepository.findById(destinoId)).thenReturn(Optional.of(destino));
 
         // 2-ACT (transferir 200 de origen a destino)
-        transaccionService.realizarTransferencia(origenId, destinoId, 200f);
+        transaccionService.realizarTransferencia(origenId, destinoId, new BigDecimal("200.00"));
 
         // 3-ASSERT (verificar los nuevos saldos: 300 y 300)
-        assertEquals(300f, origen.getSaldo());
-        assertEquals(300f, destino.getSaldo());
+        assertEquals(new BigDecimal("300.00"), origen.getSaldo());
+        assertEquals(new BigDecimal("300.00"), destino.getSaldo());
         verify(cuentaBancariaRepository, times(1)).save(origen);
         verify(cuentaBancariaRepository, times(1)).save(destino);
         verify(transaccionRepository, times(2)).save(any(Transaccion.class));

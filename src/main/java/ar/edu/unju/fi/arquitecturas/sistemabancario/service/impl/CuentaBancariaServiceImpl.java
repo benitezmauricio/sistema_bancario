@@ -37,7 +37,7 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
             throw new IllegalArgumentException("El alias ya está registrado: " + cuenta.getAlias());
         }
 
-        cuenta.setCliente(cliente);
+        cuenta.setTitular(cliente);
         return cuentaBancariaRepository.save(cuenta);
     }
 
@@ -57,8 +57,8 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
     }
 
     @Override
-    public List<CuentaBancaria> buscarPorClienteId(UUID clienteId) {
-        return cuentaBancariaRepository.findByClienteId(clienteId);
+    public List<CuentaBancaria> buscarPorTitularId(UUID titularId) {
+        return cuentaBancariaRepository.findByTitularId(titularId);
     }
 
     @Override

@@ -7,6 +7,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -49,6 +51,11 @@ public class Cliente extends AuditableEntity {
     /** Domicilio declarado por el cliente. */
     @Column(nullable = false)
     private String direccion;
+
+    /** Cuentas en las que participa como cotitular. */
+    @Builder.Default
+    @ManyToMany(mappedBy = "cotitulares", fetch = FetchType.LAZY)
+    private List<CuentaBancaria> cuentasCotitular = new ArrayList<>();
 
     /** Registra un nuevo cliente en el sistema. */
     public void registrarCLiente(){}

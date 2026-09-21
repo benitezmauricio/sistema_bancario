@@ -16,7 +16,7 @@ public interface CuentaBancariaService {
 
     Optional<CuentaBancaria> buscarPorAlias(String alias);
 
-    List<CuentaBancaria> buscarPorClienteId(UUID clienteId);
+    List<CuentaBancaria> buscarPorTitularId(UUID titularId);
 
     void cambiarEstado(UUID cuentaId, EstadoCuenta nuevoEstado);
 

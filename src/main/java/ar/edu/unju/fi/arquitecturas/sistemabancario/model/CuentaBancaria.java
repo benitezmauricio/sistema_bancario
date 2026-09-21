@@ -8,6 +8,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -47,10 +49,23 @@ public abstract class CuentaBancaria extends AuditableEntity{
     @Column(name="estado_cuenta", nullable = false, length = 20)
     private EstadoCuenta estadoCuenta;
 
-    /** Cliente titular de la cuenta bancaria. */
+    /** Cliente titular principal de la cuenta bancaria. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "cliente_id", nullable = false)
-    private Cliente cliente;
+    @JoinColumn(name = "titular_id", nullable = false)
+    private Cliente titular;
+
+    /** Clientes cotitulares adicionales adheridos a la cuenta. */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "cuentas_cotitulares",
+            joinColumns = @JoinColumn(name = "cuenta_id"),
+            inverseJoinColumns = @JoinColumn(name = "cliente_id")
+    )
+    private List<Cliente> cotitulares = new ArrayList<>();
+
+    /** Historial de transacciones de la cuenta. */
+    @OneToMany(mappedBy = "cuentaBancaria", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Transaccion> transacciones = new ArrayList<>();
 
     /** Realiza un depósito en la cuenta. */
     public void depositar(){}
