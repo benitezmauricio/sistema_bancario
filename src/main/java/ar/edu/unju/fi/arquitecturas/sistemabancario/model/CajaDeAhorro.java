@@ -5,10 +5,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Column;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -24,7 +21,8 @@ import java.time.Instant;
 @Entity
 @Table(name="cajas_ahorro")
 @PrimaryKeyJoinColumn(name="cuenta_id")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
