@@ -1,5 +1,7 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.service.impl;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.ClienteRequestDto;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.ClienteResponseDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.Cliente;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.ClienteRepository;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.service.ClienteService;
@@ -19,11 +21,29 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     @Transactional
-    public Cliente registrarCliente(Cliente cliente) {
-        if (clienteRepository.findByMail(cliente.getMail()).isPresent()){
-            throw new IllegalArgumentException("Ya existe un cliente registrado con el correo: " + cliente.getMail());
+    public ClienteResponseDto registrarCliente(ClienteRequestDto dto) {
+        if (clienteRepository.findByMail(dto.getMail()).isPresent()) {
+            throw new IllegalArgumentException("Ya existe un cliente registrado con el correo: " + dto.getMail());
         }
-        return clienteRepository.save(cliente);
+
+        Cliente cliente = Cliente.builder()
+                .nombre(dto.getNombre())
+                .cuil(dto.getCuil())
+                .mail(dto.getMail())
+                .telefono(dto.getTelefono())
+                .direccion(dto.getDireccion())
+                .build();
+
+        Cliente persistido = clienteRepository.save(cliente);
+
+        return ClienteResponseDto.builder()
+                .id(persistido.getId())
+                .nombre(persistido.getNombre())
+                .cuil(persistido.getCuil())
+                .mail(persistido.getMail())
+                .telefono(persistido.getTelefono())
+                .direccion(persistido.getDireccion())
+                .build();
     }
 
     @Override

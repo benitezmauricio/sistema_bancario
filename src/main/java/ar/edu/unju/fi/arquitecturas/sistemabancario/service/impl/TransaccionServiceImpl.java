@@ -1,5 +1,9 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.service.impl;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionRequestDto;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionResponseDto;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.exception.RecursoNoEncontradoException;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.exception.SaldoInsuficienteException;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaBancaria;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.EstadoTransaccion;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.TipoTransaccion;
@@ -13,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
@@ -85,56 +90,46 @@ public class TransaccionServiceImpl implements TransaccionService {
 
     @Override
     @Transactional
-    public void realizarTransferencia(UUID cuentaOrigenId, UUID cuentaDestinoId, BigDecimal monto) {
-        validarMonto(monto, "transferir");
-
-        if (cuentaOrigenId.equals(cuentaDestinoId)) {
-            throw new IllegalArgumentException("La cuenta de origen y destino no pueden ser la misma");
+    public TransaccionResponseDto realizarTransferencia(TransaccionRequestDto dto) {
+        if (dto.getCuentaOrigenId().equals(dto.getCuentaDestinoId())) {
+            throw new IllegalArgumentException("La cuenta de origen y de destino no pueden ser la misma");
         }
 
-        CuentaBancaria origen = cuentaBancariaRepository.findById(cuentaOrigenId)
-                .orElseThrow(() -> new RuntimeException("Cuenta origen no encontrada"));
+        CuentaBancaria origen = cuentaBancariaRepository.findById(dto.getCuentaOrigenId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cuenta origen no encontrada"));
 
-        CuentaBancaria destino = cuentaBancariaRepository.findById(cuentaDestinoId)
-                .orElseThrow(() -> new RuntimeException("Cuenta destino no encontrada"));
+        CuentaBancaria destino = cuentaBancariaRepository.findById(dto.getCuentaDestinoId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cuenta destino no encontrada"));
 
-        if (origen.getSaldo() == null || destino.getSaldo() == null) {
-            throw new IllegalStateException("Las cuentas deben tener el saldo inicializado");
+        if (origen.getSaldo().compareTo(dto.getMonto()) < 0) {
+            throw new SaldoInsuficienteException("Saldo insuficiente en la cuenta de origen");
         }
 
-        if (origen.getSaldo().compareTo(monto) < 0) {
-            throw new IllegalArgumentException("Saldo insuficiente en la cuenta de origen");
-        }
-
-        origen.setSaldo(origen.getSaldo().subtract(monto));
-        destino.setSaldo(destino.getSaldo().add(monto));
-
+        origen.setSaldo(origen.getSaldo().subtract(dto.getMonto()));
+        destino.setSaldo(destino.getSaldo().add(dto.getMonto()));
         cuentaBancariaRepository.save(origen);
         cuentaBancariaRepository.save(destino);
 
-        Date fecha = new Date();
-        Time hora = Time.valueOf(LocalTime.now());
+        transaccionRepository.save(crearMovimiento(origen, dto.getMonto(), TipoTransaccion.TRANSFERENCIA_ENVIADA));
+        transaccionRepository.save(crearMovimiento(destino, dto.getMonto(), TipoTransaccion.TRANSFERENCIA_RECIBIDA));
 
-        Transaccion transaccionDebito = Transaccion.builder()
-                .cuentaBancaria(origen)
-                .monto(monto)
-                .tipo(TipoTransaccion.TRANSFERENCIA_ENVIADA)
-                .estadoTransaccion(EstadoTransaccion.COMPLETADA)
-                .fecha(fecha)
-                .hora(hora)
+        return TransaccionResponseDto.builder()
+                .mensaje("Transferencia realizada exitosamente")
+                .monto(dto.getMonto())
+                .timestamp(LocalDateTime.now())
                 .build();
+    }
 
-        Transaccion transaccionCredito = Transaccion.builder()
-                .cuentaBancaria(destino)
+    //metodo auxiliar para no repetir codigo
+    private Transaccion crearMovimiento(CuentaBancaria cuenta, BigDecimal monto, TipoTransaccion tipo) {
+        return Transaccion.builder()
+                .cuentaBancaria(cuenta)
                 .monto(monto)
-                .tipo(TipoTransaccion.TRANSFERENCIA_RECIBIDA)
+                .tipo(tipo)
                 .estadoTransaccion(EstadoTransaccion.COMPLETADA)
-                .fecha(fecha)
-                .hora(hora)
+                .fecha(new Date())
+                .hora(Time.valueOf(LocalTime.now()))
                 .build();
-
-        transaccionRepository.save(transaccionDebito);
-        transaccionRepository.save(transaccionCredito);
     }
 
     private void validarMonto(BigDecimal monto, String operacion) {

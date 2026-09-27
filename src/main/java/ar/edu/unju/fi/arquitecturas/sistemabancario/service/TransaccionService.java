@@ -1,5 +1,7 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.service;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionRequestDto;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionResponseDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.Transaccion;
 
 import java.math.BigDecimal;
@@ -12,7 +14,7 @@ public interface TransaccionService {
 
     Transaccion realizarExtraccion(UUID cuentaId, BigDecimal monto);
 
-    void realizarTransferencia(UUID cuentaOrigenId, UUID cuentaDestinoId, BigDecimal monto);
+    TransaccionResponseDto realizarTransferencia(TransaccionRequestDto dto);
 
     List<Transaccion> obtenerHistorialPorCuenta(UUID cuentaId);
 

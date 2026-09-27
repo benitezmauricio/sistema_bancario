@@ -1,5 +1,7 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.service;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionRequestDto;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionResponseDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CajaDeAhorro;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaBancaria;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.EstadoTransaccion;
@@ -81,7 +83,7 @@ public class TransaccionServiceTest {
     @Test
     @DisplayName("Debe realizar transferencia descontando del origen y sumando al destino")
     void realizarTransferencia_CuandoDatosSonValidos_DebeActualizarAmbosSaldos() {
-        // 1-ARRANGE (preparar dos cuentas)
+        // 1-ARRANGE (preparar dos cuentas y el DTO)
         UUID origenId = UUID.randomUUID();
         UUID destinoId = UUID.randomUUID();
 
@@ -93,15 +95,23 @@ public class TransaccionServiceTest {
         destino.setId(destinoId);
         destino.setSaldo(new BigDecimal("100.00"));
 
+        TransaccionRequestDto requestDto = TransaccionRequestDto.builder()
+                .cuentaOrigenId(origenId)
+                .cuentaDestinoId(destinoId)
+                .monto(new BigDecimal("200.00"))
+                .build();
+
         when(cuentaBancariaRepository.findById(origenId)).thenReturn(Optional.of(origen));
         when(cuentaBancariaRepository.findById(destinoId)).thenReturn(Optional.of(destino));
 
-        // 2-ACT (transferir 200 de origen a destino)
-        transaccionService.realizarTransferencia(origenId, destinoId, new BigDecimal("200.00"));
+        // 2-ACT
+        TransaccionResponseDto respuesta = transaccionService.realizarTransferencia(requestDto);
 
-        // 3-ASSERT (verificar los nuevos saldos: 300 y 300)
+        // 3-ASSERT (verificar los nuevos saldos y la respuesta)
+        assertNotNull(respuesta);
         assertEquals(new BigDecimal("300.00"), origen.getSaldo());
         assertEquals(new BigDecimal("300.00"), destino.getSaldo());
+        assertEquals(new BigDecimal("200.00"), respuesta.getMonto());
         verify(cuentaBancariaRepository, times(1)).save(origen);
         verify(cuentaBancariaRepository, times(1)).save(destino);
         verify(transaccionRepository, times(2)).save(any(Transaccion.class));

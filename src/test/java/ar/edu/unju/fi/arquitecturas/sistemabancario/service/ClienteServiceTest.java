@@ -1,5 +1,7 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.service;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.ClienteRequestDto;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.ClienteResponseDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.Cliente;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.ClienteRepository;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.service.impl.ClienteServiceImpl;
@@ -72,7 +74,7 @@ public class ClienteServiceTest {
     @DisplayName("Debe guardar un cliente cuando los datos son válidos y no duplicados")
     void registrarCliente_CuandoDatosSonValidos_DebeRetornarClienteGuardado() {
         // 1-ARRANGE
-        Cliente nuevoCliente = Cliente.builder()
+        ClienteRequestDto requestDto = ClienteRequestDto.builder()
                 .nombre("Carlos López")
                 .cuil("20323334")
                 .mail("carlos@email.com")
@@ -90,24 +92,25 @@ public class ClienteServiceTest {
                 .direccion("Calle Falsa 123")
                 .build();
 
-        when(clienteRepository.findByMail(nuevoCliente.getMail())).thenReturn(Optional.empty());
-        when(clienteRepository.save(nuevoCliente)).thenReturn(clientePersistido);
+        when(clienteRepository.findByMail(requestDto.getMail())).thenReturn(Optional.empty());
+        when(clienteRepository.save(any(Cliente.class))).thenReturn(clientePersistido);
 
         // 2-ACT
-        Cliente resultado = clienteService.registrarCliente(nuevoCliente);
+        ClienteResponseDto resultado = clienteService.registrarCliente(requestDto);
 
         // 3-ASSERT
-        assertNotNull(resultado.getId());
+        assertNotNull(resultado);
+        assertEquals(clienteId, resultado.getId());
         assertEquals("Carlos López", resultado.getNombre());
-        verify(clienteRepository, times(1)).findByMail(nuevoCliente.getMail());
-        verify(clienteRepository, times(1)).save(nuevoCliente);
+        verify(clienteRepository, times(1)).findByMail(requestDto.getMail());
+        verify(clienteRepository, times(1)).save(any(Cliente.class));
     }
 
     @Test
     @DisplayName("Debe lanzar excepción si el Email ya se encuentra registrado")
     void registrarCliente_CuandoEmailDuplicado_DebeLanzarExcepcion() {
         // 1-ARRANGE
-        Cliente duplicado = Cliente.builder()
+        ClienteRequestDto requestDto = ClienteRequestDto.builder()
                 .nombre("Carlos López")
                 .cuil("20323334")
                 .mail("carlos@email.com")
@@ -115,10 +118,15 @@ public class ClienteServiceTest {
                 .direccion("Calle Falsa 123")
                 .build();
 
-        when(clienteRepository.findByMail(duplicado.getMail())).thenReturn(Optional.of(duplicado));
+        Cliente clienteExistente = Cliente.builder()
+                .id(UUID.randomUUID())
+                .mail("carlos@email.com")
+                .build();
+
+        when(clienteRepository.findByMail(requestDto.getMail())).thenReturn(Optional.of(clienteExistente));
 
         // 2-ACT y 3-ASSERT
-        assertThrows(IllegalArgumentException.class, () -> clienteService.registrarCliente(duplicado));
+        assertThrows(IllegalArgumentException.class, () -> clienteService.registrarCliente(requestDto));
         verify(clienteRepository, never()).save(any(Cliente.class));
     }
 }
