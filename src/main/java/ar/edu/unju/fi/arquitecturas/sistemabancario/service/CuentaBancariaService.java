@@ -1,5 +1,7 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.service;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.CuentaRequestDto;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.CuentaResponseDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaBancaria;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.EstadoCuenta;
 
@@ -8,6 +10,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CuentaBancariaService {
+    CuentaResponseDto crearCuenta(CuentaRequestDto request);
+
+    Optional<CuentaResponseDto> buscarDetallePorCbu(String cbu);
+
     CuentaBancaria crearCuenta(CuentaBancaria cuenta, UUID clienteId);
 
     Optional<CuentaBancaria> buscarPorId(UUID id);

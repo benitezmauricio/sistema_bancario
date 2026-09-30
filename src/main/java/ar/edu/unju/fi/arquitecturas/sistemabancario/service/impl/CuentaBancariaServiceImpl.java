@@ -1,7 +1,12 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.service.impl;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.CuentaRequestDto;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.CuentaResponseDto;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.mapper.CuentaMapper;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CajaDeAhorro;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.Cliente;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaBancaria;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaCorriente;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.EstadoCuenta;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.ClienteRepository;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.CuentaBancariaRepository;
@@ -22,6 +27,38 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
 
     private final CuentaBancariaRepository cuentaBancariaRepository;
     private final ClienteRepository clienteRepository;
+
+    @Override
+    @Transactional
+    public CuentaResponseDto crearCuenta(CuentaRequestDto request) {
+        CuentaBancaria cuenta = switch (request.getTipoCuenta()) {
+            case CAJA_DE_AHORRO ->
+                    new CajaDeAhorro(request.getCupoLimite(), request.getInteresAnual());
+            case CUENTA_CORRIENTE ->
+                    new CuentaCorriente(request.getMargen(), request.getCostoComision());
+        };
+
+        cuenta.setCbu(request.getCbu());
+        cuenta.setAlias(request.getAlias());
+        cuenta.setSaldo(request.getSaldo());
+        cuenta.setEstadoCuenta(request.getEstadoCuenta());
+
+        List<UUID> cotitulares = Optional.ofNullable(request.getCotitulares())
+                .orElseGet(List::of);
+        for (UUID cotitularId : cotitulares.stream().distinct().toList()) {
+            Cliente cotitular = clienteRepository.findById(cotitularId)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "No existe el cotitular: " + cotitularId));
+            cuenta.getCotitulares().add(cotitular);
+        }
+
+        return CuentaMapper.toResponse(crearCuenta(cuenta, request.getTitular()));
+    }
+
+    @Override
+    public Optional<CuentaResponseDto> buscarDetallePorCbu(String cbu) {
+        return cuentaBancariaRepository.findByCbu(cbu).map(CuentaMapper::toResponse);
+    }
 
     @Override
     @Transactional
