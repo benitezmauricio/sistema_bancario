@@ -1,40 +1,67 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.exception;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.ErrorResponseDto;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
+import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 404 Not Found: para recursos inexistentes
     @ExceptionHandler(RecursoNoEncontradoException.class)
-    public ResponseEntity<Map<String, String>> manejarNoEncontrado(RecursoNoEncontradoException ex) {
-        Map<String, String> respuesta = new HashMap<>();
-        respuesta.put("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+    public ResponseEntity<ErrorResponseDto> manejarNoEncontrado(
+            RecursoNoEncontradoException ex, HttpServletRequest request) {
+        return respuesta(HttpStatus.NOT_FOUND, ex.getMessage(), request, null);
     }
 
-    // 400 Bad Request: cuando falla alguna regla de saldo
     @ExceptionHandler(SaldoInsuficienteException.class)
-    public ResponseEntity<Map<String, String>> manejarSaldo(SaldoInsuficienteException ex) {
-        Map<String, String> respuesta = new HashMap<>();
-        respuesta.put("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+    public ResponseEntity<ErrorResponseDto> manejarSaldo(
+            SaldoInsuficienteException ex, HttpServletRequest request) {
+        return respuesta(HttpStatus.BAD_REQUEST, ex.getMessage(), request, null);
     }
 
-    // 400 Bad Request: cuando falla @Valid en los DTOs de entrada
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseDto> manejarDatosInvalidos(
+            IllegalArgumentException ex, HttpServletRequest request) {
+        return respuesta(HttpStatus.BAD_REQUEST, ex.getMessage(), request, null);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> manejarValidaciones(MethodArgumentNotValidException ex) {
-        Map<String, String> errores = new HashMap<>();
+    public ResponseEntity<ErrorResponseDto> manejarValidaciones(
+            MethodArgumentNotValidException ex, HttpServletRequest request) {
+        Map<String, String> errores = new LinkedHashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error ->
-                errores.put(error.getField(), error.getDefaultMessage())
+                errores.put(error.getField(), error.getDefaultMessage()));
+
+        return respuesta(
+                HttpStatus.BAD_REQUEST,
+                "La solicitud contiene datos inválidos",
+                request,
+                errores
         );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
+    }
+
+    private ResponseEntity<ErrorResponseDto> respuesta(
+            HttpStatus status,
+            String message,
+            HttpServletRequest request,
+            Map<String, String> fieldErrors) {
+        ErrorResponseDto respuesta = ErrorResponseDto.builder()
+                .timestamp(Instant.now())
+                .status(status.value())
+                .error(status.getReasonPhrase())
+                .message(message)
+                .path(request.getRequestURI())
+                .fieldErrors(fieldErrors)
+                .build();
+
+        return ResponseEntity.status(status).body(respuesta);
     }
 }
