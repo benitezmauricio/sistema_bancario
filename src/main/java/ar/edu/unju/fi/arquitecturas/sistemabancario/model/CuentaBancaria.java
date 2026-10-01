@@ -2,12 +2,8 @@ package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -15,29 +11,30 @@ import java.util.UUID;
 /**
  * Clase base abstracta para las cuentas bancarias del sistema.
  *
- * <p>Utiliza herencia JPA mediante la estrategia {@link InheritanceType#JOINED}.
- * Sus subclases representan los distintos tipos de cuenta disponibles.</p>
+ * <p>Utiliza herencia JPA mediante la estrategia {@link InheritanceType#SINGLE_TABLE}.
+ * Todas las subclases se almacenan en una única tabla {@code cuentas_bancarias}, diferenciadas
+ * por la columna discriminadora {@code tipo_cuenta}.</p>
  */
 @Entity
 @Table(name = "cuentas_bancarias")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_cuenta", discriminatorType = DiscriminatorType.STRING, length = 30)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
-public abstract class CuentaBancaria extends AuditableEntity{
+public abstract class CuentaBancaria extends AuditableEntity {
     /** Identificador único de la cuenta bancaria. */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     /** Código Bancario Uniforme de la cuenta. */
-    @Column(nullable = false, unique = true, length=22)
+    @Column(nullable = false, unique = true, length = 22)
     private String cbu;
 
     /** Alias único utilizado para identificar la cuenta. */
-    @Column(nullable = false, unique = true, length=50)
+    @Column(nullable = false, unique = true, length = 50)
     private String alias;
 
     /** Saldo disponible de la cuenta. */
@@ -46,7 +43,7 @@ public abstract class CuentaBancaria extends AuditableEntity{
 
     /** Estado actual de la cuenta bancaria. */
     @Enumerated(EnumType.STRING)
-    @Column(name="estado_cuenta", nullable = false, length = 20)
+    @Column(name = "estado_cuenta", nullable = false, length = 20)
     private EstadoCuenta estadoCuenta;
 
     /** Cliente titular principal de la cuenta bancaria. */
@@ -66,14 +63,5 @@ public abstract class CuentaBancaria extends AuditableEntity{
     /** Historial de transacciones de la cuenta. */
     @OneToMany(mappedBy = "cuentaBancaria", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Transaccion> transacciones = new ArrayList<>();
-
-    /** Realiza un depósito en la cuenta. */
-    public void depositar(){}
-
-    /** Realiza una extracción de la cuenta. */
-    public void extraer(){}
-
-    /** Realiza una transferencia desde la cuenta. */
-    public void transferir(){}
 
 }
