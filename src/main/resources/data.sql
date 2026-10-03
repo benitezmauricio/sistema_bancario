@@ -12,13 +12,12 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 -- 1. Inserción de clientes
 INSERT INTO clientes
-    (id, nombre, cuil, mail, telefono, direccion, fecha_creacion, fecha_ultima_modificacion)
+(id, nombre, cuil, mail, telefono, direccion, estado_cliente, fecha_creacion, fecha_ultima_modificacion)
 VALUES
     (UUID_TO_BIN('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'), 'Juan Pérez', '20-301112-2',
-     'juan.perez@email.com', '4221122', 'Av. Belgrano 123', NOW(), NOW()),
+     'juan.perez@email.com', '4221122', 'Av. Belgrano 123', 'ACTIVO', NOW(), NOW()),
     (UUID_TO_BIN('b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a22'), 'María Gómez', '27-312223-3',
-     'maria.gomez@email.com', '4233344', 'Calle Lavalle 456', NOW(), NOW());
-
+     'maria.gomez@email.com', '4233344', 'Calle Lavalle 456', 'ACTIVO', NOW(), NOW());
 -- 2. Inserción de cuentas bancarias
 INSERT INTO cuentas_bancarias
     (id, alias, cbu, estado_cuenta, saldo, titular_id, fecha_creacion, fecha_ultima_modificacion)

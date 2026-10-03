@@ -1,12 +1,10 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCliente;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -62,5 +60,16 @@ public class Cliente extends AuditableEntity {
 
     /** Registra un cotitular asociado al cliente. */
     public void registrarCotitular(){}
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_cliente", nullable = false, length = 30)
+    private EstadoCliente estadoCliente;
+
+    @Column(name = "token_activacion", unique = true)
+    private String tokenActivacion;
+
+    @Column(name = "fecha_expiracion_token")
+    private LocalDateTime fechaExpiracionToken;
+
 }
 

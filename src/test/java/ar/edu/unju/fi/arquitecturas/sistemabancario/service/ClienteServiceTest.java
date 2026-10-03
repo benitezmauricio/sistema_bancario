@@ -2,6 +2,7 @@ package ar.edu.unju.fi.arquitecturas.sistemabancario.service;
 
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.ClienteRequestDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.ClienteResponseDto;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.event.ClienteCreadoEvent;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.Cliente;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.ClienteRepository;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.service.impl.ClienteServiceImpl;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -21,11 +23,13 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class ClienteServiceTest {
 
-    // 1. Simulacion del repositorio
+    // Simulacion del repositorio
     @Mock
     private ClienteRepository clienteRepository;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
-    // 2. Inyeccion del servicio real con los repositorios simulados
+    // Inyeccion del servicio real con los repositorios simulados
     @InjectMocks
     private ClienteServiceImpl clienteService;
 
@@ -104,6 +108,7 @@ public class ClienteServiceTest {
         assertEquals("Carlos López", resultado.getNombre());
         verify(clienteRepository, times(1)).findByMail(requestDto.getMail());
         verify(clienteRepository, times(1)).save(any(Cliente.class));
+        verify(eventPublisher, times(1)).publishEvent(any(ClienteCreadoEvent.class));
     }
 
     @Test
