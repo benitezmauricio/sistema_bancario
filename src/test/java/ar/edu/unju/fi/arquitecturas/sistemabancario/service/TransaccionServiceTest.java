@@ -4,6 +4,8 @@ import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionRequestDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionResponseDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CajaDeAhorro;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaBancaria;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaCorriente;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCuenta;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoTransaccion;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.TipoTransaccion;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.Transaccion;
@@ -18,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -114,6 +117,41 @@ public class TransaccionServiceTest {
         assertEquals(new BigDecimal("200.00"), respuesta.getMonto());
         verify(cuentaBancariaRepository, times(1)).save(origen);
         verify(cuentaBancariaRepository, times(1)).save(destino);
+        verify(transaccionRepository, times(2)).save(any(Transaccion.class));
+    }
+
+    @Test
+    @DisplayName("Debe procesar débito de comisiones en cuentas activas registrando DEBITO_COMISION")
+    void procesarDebitoComisionesMasivo_DebeDescontarSaldoYRegistrarTransaccion() {
+        // 1-ARRANGE
+        CajaDeAhorro cajaAhorro = new CajaDeAhorro();
+        cajaAhorro.setId(UUID.randomUUID());
+        cajaAhorro.setSaldo(new BigDecimal("10000.00"));
+        cajaAhorro.setEstadoCuenta(EstadoCuenta.ACTIVA);
+
+        CuentaCorriente cuentaCorriente = new CuentaCorriente();
+        cuentaCorriente.setId(UUID.randomUUID());
+        cuentaCorriente.setSaldo(new BigDecimal("20000.00"));
+        cuentaCorriente.setEstadoCuenta(EstadoCuenta.ACTIVA);
+
+        org.springframework.data.domain.Page<CuentaBancaria> paginaMock =
+                new org.springframework.data.domain.PageImpl<>(List.of(cajaAhorro, cuentaCorriente));
+
+        when(cuentaBancariaRepository.findByEstadoCuenta(eq(EstadoCuenta.ACTIVA), any(org.springframework.data.domain.Pageable.class)))
+                .thenReturn(paginaMock);
+
+        BigDecimal comisionAhorro = new BigDecimal("2000.00");
+        BigDecimal comisionCorriente = new BigDecimal("5000.00");
+
+        // 2-ACT
+        transaccionService.procesarDebitoComisionesMasivo(comisionAhorro, comisionCorriente);
+
+        // 3-ASSERT
+        assertEquals(new BigDecimal("8000.00"), cajaAhorro.getSaldo());
+        assertEquals(new BigDecimal("15000.00"), cuentaCorriente.getSaldo());
+
+        verify(cuentaBancariaRepository, times(1)).save(cajaAhorro);
+        verify(cuentaBancariaRepository, times(1)).save(cuentaCorriente);
         verify(transaccionRepository, times(2)).save(any(Transaccion.class));
     }
 }
