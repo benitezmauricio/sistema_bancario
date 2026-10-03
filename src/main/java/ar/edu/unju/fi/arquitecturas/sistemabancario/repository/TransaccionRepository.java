@@ -1,6 +1,6 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.repository;
 
-import ar.edu.unju.fi.arquitecturas.sistemabancario.model.TipoTransaccion;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.TipoTransaccion;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.Transaccion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

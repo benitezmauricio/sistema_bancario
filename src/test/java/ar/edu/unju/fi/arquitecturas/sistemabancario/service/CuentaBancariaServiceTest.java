@@ -3,7 +3,7 @@ package ar.edu.unju.fi.arquitecturas.sistemabancario.service;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CajaDeAhorro;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.Cliente;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaBancaria;
-import ar.edu.unju.fi.arquitecturas.sistemabancario.model.EstadoCuenta;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCuenta;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.ClienteRepository;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.CuentaBancariaRepository;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.service.impl.CuentaBancariaServiceImpl;

@@ -19,4 +19,7 @@ public interface TransaccionService {
     List<Transaccion> obtenerHistorialPorCuenta(UUID cuentaId);
 
     Transaccion buscarPorId(UUID transaccionId);
+
+    void procesarDebitoComisionesMasivo(BigDecimal comisionAhorro, BigDecimal comisionCorriente);
+
 }

@@ -1,4 +1,4 @@
-package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
+package ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums;
 
 /**
  * Tipos de operaciones que pueden registrarse en una cuenta bancaria.
@@ -11,5 +11,7 @@ public enum TipoTransaccion {
     /** Transferencia enviada desde la cuenta. */
     TRANSFERENCIA_ENVIADA,
     /** Transferencia recibida en la cuenta. */
-    TRANSFERENCIA_RECIBIDA;
+    TRANSFERENCIA_RECIBIDA,
+    /** Costo de comision*/
+    DEBITO_COMISION;
 }

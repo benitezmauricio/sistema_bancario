@@ -45,7 +45,7 @@ public class ClienteServiceImpl implements ClienteService {
                 .direccion(persistido.getDireccion())
                 .build();
     }
-
+    //implementar con red only--
     @Override
     public Optional<Cliente> buscarPorId(UUID id) {
         return clienteRepository.findById(id);

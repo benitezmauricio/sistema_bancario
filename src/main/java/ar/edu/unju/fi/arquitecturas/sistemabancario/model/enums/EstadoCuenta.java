@@ -1,4 +1,4 @@
-package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
+package ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums;
 
 /**
  * Estados posibles de una cuenta bancaria.
