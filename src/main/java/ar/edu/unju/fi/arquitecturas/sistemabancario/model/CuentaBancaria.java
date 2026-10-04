@@ -3,6 +3,8 @@ package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCuenta;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.SoftDeleteType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,6 +22,9 @@ import java.util.UUID;
 @Table(name = "cuentas_bancarias")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_cuenta", discriminatorType = DiscriminatorType.STRING, length = 30)
+/* Activa el borrado lógico de la tabla **/
+@SoftDelete(columnName = "eliminado", strategy = SoftDeleteType.DELETED)
+
 @Getter
 @Setter
 @NoArgsConstructor
