@@ -1,6 +1,6 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.dto;
 
-import ar.edu.unju.fi.arquitecturas.sistemabancario.model.EstadoCuenta;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCuenta;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;

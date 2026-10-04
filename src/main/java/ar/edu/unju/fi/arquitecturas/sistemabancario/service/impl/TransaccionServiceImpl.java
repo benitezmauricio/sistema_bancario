@@ -4,14 +4,20 @@ import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionRequestDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionResponseDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.exception.RecursoNoEncontradoException;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.exception.SaldoInsuficienteException;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CajaDeAhorro;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaBancaria;
-import ar.edu.unju.fi.arquitecturas.sistemabancario.model.EstadoTransaccion;
-import ar.edu.unju.fi.arquitecturas.sistemabancario.model.TipoTransaccion;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaCorriente;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCuenta;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoTransaccion;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.TipoTransaccion;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.Transaccion;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.CuentaBancariaRepository;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.TransaccionRepository;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.service.TransaccionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,6 +93,11 @@ public class TransaccionServiceImpl implements TransaccionService {
 
         return transaccionRepository.save(transaccion);
     }
+    private void validarMonto(BigDecimal monto, String operacion) {
+        if (monto == null || monto.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("El monto a " + operacion + " debe ser mayor a cero");
+        }
+    }
 
     @Override
     @Transactional
@@ -132,11 +143,7 @@ public class TransaccionServiceImpl implements TransaccionService {
                 .build();
     }
 
-    private void validarMonto(BigDecimal monto, String operacion) {
-        if (monto == null || monto.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("El monto a " + operacion + " debe ser mayor a cero");
-        }
-    }
+
 
     @Override
     public List<Transaccion> obtenerHistorialPorCuenta(UUID cuentaId) {
@@ -147,5 +154,45 @@ public class TransaccionServiceImpl implements TransaccionService {
     public Transaccion buscarPorId(UUID transaccionId) {
         return transaccionRepository.findById(transaccionId)
                 .orElseThrow(() -> new RuntimeException("Transacción no encontrada con id: " + transaccionId));
+    }
+
+    @Override
+    @Transactional
+    public void procesarDebitoComisionesMasivo(BigDecimal comisionAhorro, BigDecimal comisionCorriente) {
+        int pageSize = 100; // Tamaño del lote ajustable
+        Pageable pageable = PageRequest.of(0, pageSize);
+        Page<CuentaBancaria> paginaCuentas;
+
+        do {
+            paginaCuentas = cuentaBancariaRepository.findByEstadoCuenta(EstadoCuenta.ACTIVA, pageable);
+
+            for (CuentaBancaria cuenta : paginaCuentas.getContent()) {
+                BigDecimal comision = null;
+
+                if (cuenta instanceof CajaDeAhorro) {
+                    comision = comisionAhorro;
+                } else if (cuenta instanceof CuentaCorriente) {
+                    comision = comisionCorriente;
+                }
+
+                if (comision != null && comision.compareTo(BigDecimal.ZERO) > 0) {
+                    cuenta.setSaldo(cuenta.getSaldo().subtract(comision));
+                    cuentaBancariaRepository.save(cuenta);
+
+                    Transaccion debito = Transaccion.builder()
+                            .cuentaBancaria(cuenta)
+                            .monto(comision)
+                            .tipo(TipoTransaccion.DEBITO_COMISION)
+                            .estadoTransaccion(EstadoTransaccion.COMPLETADA)
+                            .fecha(new Date())
+                            .hora(Time.valueOf(LocalTime.now()))
+                            .build();
+
+                    transaccionRepository.save(debito);
+                }
+            }
+
+            pageable = paginaCuentas.nextPageable();
+        } while (paginaCuentas.hasNext());
     }
 }

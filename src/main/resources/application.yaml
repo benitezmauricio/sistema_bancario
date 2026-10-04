@@ -19,3 +19,9 @@ spring:
     defer-datasource-initialization: true
     show-sql: true
     open-in-view: false
+
+app:
+  comisiones:
+    caja-ahorro: 2000.00
+    cuenta-corriente: 5000.00
+    cron: "0 0 0 1 * ?" #se ejecuta el 1er día de cada mes a las 12

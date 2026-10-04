@@ -3,7 +3,7 @@ package ar.edu.unju.fi.arquitecturas.sistemabancario.service;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.CuentaRequestDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.CuentaResponseDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaBancaria;
-import ar.edu.unju.fi.arquitecturas.sistemabancario.model.EstadoCuenta;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCuenta;
 
 import java.util.List;
 import java.util.Optional;

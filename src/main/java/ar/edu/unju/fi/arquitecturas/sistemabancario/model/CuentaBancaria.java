@@ -1,5 +1,6 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCuenta;
 import jakarta.persistence.*;
 import lombok.*;
 
