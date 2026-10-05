@@ -4,8 +4,6 @@ import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CajaDeAhorro;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.Cliente;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaBancaria;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCuenta;
-import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.ClienteRepository;
-import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.CuentaBancariaRepository;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.service.impl.CuentaBancariaServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,14 +22,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class CuentaBancariaServiceTest {
 
-    // 1. Simulacion de repositorios
+    // 1. Simulación de los servicios especializados inyectados
     @Mock
-    private CuentaBancariaRepository cuentaBancariaRepository;
+    private CuentaBancariaCrudService crudService;
 
     @Mock
-    private ClienteRepository clienteRepository;
+    private CuentaBancariaValidationService validationService;
 
-    // 2. Inyeccion del servicio real con los repositorios simulados
+    // 2. Inyección del servicio orquestador con sus dependencias simuladas
     @InjectMocks
     private CuentaBancariaServiceImpl cuentaBancariaService;
 
@@ -51,20 +49,22 @@ public class CuentaBancariaServiceTest {
         cuenta.setSaldo(new BigDecimal("1500.00"));
         cuenta.setEstadoCuenta(EstadoCuenta.ACTIVA);
 
-        when(clienteRepository.findById(clienteId)).thenReturn(Optional.of(cliente));
-        when(cuentaBancariaRepository.findByCbu(cuenta.getCbu())).thenReturn(Optional.empty());
-        when(cuentaBancariaRepository.findByAlias(cuenta.getAlias())).thenReturn(Optional.empty());
-        when(cuentaBancariaRepository.save(any(CuentaBancaria.class))).thenReturn(cuenta);
+        when(validationService.validarYObtenerTitular(clienteId)).thenReturn(cliente);
+        doNothing().when(validationService).validarCbuUnico(cuenta.getCbu());
+        doNothing().when(validationService).validarAliasUnico(cuenta.getAlias());
+        when(crudService.guardar(any(CuentaBancaria.class))).thenReturn(cuenta);
 
-        // 2-ACT (ejecutar metodo)
+        // 2-ACT (ejecutar método)
         CuentaBancaria resultado = cuentaBancariaService.crearCuenta(cuenta, clienteId);
 
         // 3-ASSERT (verificar resultados)
         assertNotNull(resultado);
         assertEquals("JUAN.BANCO", resultado.getAlias());
         assertEquals(cliente, resultado.getTitular());
-        verify(clienteRepository, times(1)).findById(clienteId);
-        verify(cuentaBancariaRepository, times(1)).save(cuenta);
+        verify(validationService, times(1)).validarYObtenerTitular(clienteId);
+        verify(validationService, times(1)).validarCbuUnico(cuenta.getCbu());
+        verify(validationService, times(1)).validarAliasUnico(cuenta.getAlias());
+        verify(crudService, times(1)).guardar(cuenta);
     }
 
     @Test
@@ -77,12 +77,13 @@ public class CuentaBancariaServiceTest {
         CajaDeAhorro cuenta = new CajaDeAhorro();
         cuenta.setCbu("0000003100000000000001");
 
-        when(clienteRepository.findById(clienteId)).thenReturn(Optional.of(cliente));
-        when(cuentaBancariaRepository.findByCbu(cuenta.getCbu())).thenReturn(Optional.of(cuenta));
+        when(validationService.validarYObtenerTitular(clienteId)).thenReturn(cliente);
+        doThrow(new IllegalArgumentException("Ya existe una cuenta con el CBU: " + cuenta.getCbu()))
+                .when(validationService).validarCbuUnico(cuenta.getCbu());
 
-        // 2-ACT y 3-ASSERT (verificar que lance la excepcion)
+        // 2-ACT y 3-ASSERT (verificar que lance la excepción)
         assertThrows(IllegalArgumentException.class, () -> cuentaBancariaService.crearCuenta(cuenta, clienteId));
-        verify(cuentaBancariaRepository, never()).save(any(CuentaBancaria.class));
+        verify(crudService, never()).guardar(any(CuentaBancaria.class));
     }
 
     @Test
@@ -93,14 +94,14 @@ public class CuentaBancariaServiceTest {
         CajaDeAhorro cuenta = new CajaDeAhorro();
         cuenta.setId(cuentaId);
 
-        when(cuentaBancariaRepository.findById(cuentaId)).thenReturn(Optional.of(cuenta));
+        when(crudService.buscarPorId(cuentaId)).thenReturn(Optional.of(cuenta));
 
-        // 2-ACT (ejecutar metodo)
+        // 2-ACT (ejecutar método)
         Optional<CuentaBancaria> resultado = cuentaBancariaService.buscarPorId(cuentaId);
 
         // 3-ASSERT (verificar resultados)
         assertTrue(resultado.isPresent());
         assertEquals(cuentaId, resultado.get().getId());
-        verify(cuentaBancariaRepository, times(1)).findById(cuentaId);
+        verify(crudService, times(1)).buscarPorId(cuentaId);
     }
 }
