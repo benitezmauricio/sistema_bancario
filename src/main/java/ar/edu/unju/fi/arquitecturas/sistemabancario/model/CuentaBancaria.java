@@ -23,7 +23,7 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_cuenta", discriminatorType = DiscriminatorType.STRING, length = 30)
 /* Activa el borrado lógico de la tabla **/
-@SoftDelete(columnName = "eliminado", strategy = SoftDeleteType.DELETED)
+@SoftDelete(columnName = "fecha_baja", strategy = SoftDeleteType.TIMESTAMP)
 
 @Getter
 @Setter
