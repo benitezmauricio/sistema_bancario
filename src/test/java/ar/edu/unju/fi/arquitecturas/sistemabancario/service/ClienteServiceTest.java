@@ -198,4 +198,20 @@ public class ClienteServiceTest {
         verify(clienteRepository, never()).save(any(Cliente.class));
         verify(tokenActivacionRepository, never()).delete(any(TokenActivacion.class));
     }
+
+    @Test
+    @DisplayName("Debe eliminar un cliente cuando el ID existe")
+    void eliminarCliente_CuandoIdExiste_DebeLlamarDeleteById() {
+        // 1. PREPARAR (Arrange)
+        UUID clienteId = UUID.randomUUID();
+        when(clienteRepository.existsById(clienteId)).thenReturn(true);
+        doNothing().when(clienteRepository).deleteById(clienteId);
+
+        // 2. EJECUTAR (Act)
+        clienteService.eliminarCliente(clienteId);
+
+        // 3. VERIFICAR (Assert)
+        verify(clienteRepository, times(1)).existsById(clienteId);
+        verify(clienteRepository, times(1)).deleteById(clienteId);
+    }
 }
