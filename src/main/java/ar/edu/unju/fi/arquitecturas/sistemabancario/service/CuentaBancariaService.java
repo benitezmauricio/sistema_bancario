@@ -2,17 +2,35 @@ package ar.edu.unju.fi.arquitecturas.sistemabancario.service;
 
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.CuentaRequestDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.CuentaResponseDto;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.CuentaUpdateDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaBancaria;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCuenta;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface CuentaBancariaService {
+
     CuentaResponseDto crearCuenta(CuentaRequestDto request);
 
     Optional<CuentaResponseDto> buscarDetallePorCbu(String cbu);
+
+    CuentaResponseDto buscarDetallePorId(UUID id);
+
+    CuentaResponseDto buscarDetallePorAlias(String alias);
+
+    Page<CuentaResponseDto> listarCuentas(EstadoCuenta estado, Pageable pageable);
+
+    CuentaResponseDto actualizarCuentaPorId(UUID id, CuentaUpdateDto dto);
+
+    CuentaResponseDto actualizarCuentaPorCbu(String cbu, CuentaUpdateDto dto);
+
+    void eliminarCuentaPorId(UUID id);
+
+    void eliminarCuentaPorCbu(String cbu);
 
     CuentaBancaria crearCuenta(CuentaBancaria cuenta, UUID clienteId);
 

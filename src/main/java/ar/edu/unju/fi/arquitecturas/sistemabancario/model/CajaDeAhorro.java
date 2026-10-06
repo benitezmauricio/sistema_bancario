@@ -1,38 +1,30 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.Column;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import lombok.*;
-
-import java.time.Instant;
 
 /**
  * Representa una caja de ahorro bancaria.
  *
- * <p>Es una especialización de {@link CuentaBancaria} que incorpora
- * información sobre el cupo límite y el interés anual.</p>
+ * <p>Especialización de {@link CuentaBancaria} que incorpora
+ * información sobre el cupo límite y el interés anual. Se almacena
+ * en la tabla unificada {@code cuentas_bancarias}.</p>
  */
 @Entity
-@Table(name="cajas_ahorro")
-@PrimaryKeyJoinColumn(name="cuenta_id")
+@DiscriminatorValue("CAJA_DE_AHORRO")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-
 public class CajaDeAhorro extends CuentaBancaria {
     /** Límite operativo de la caja de ahorro. */
-    @Column(nullable = false, name = "cupo_limite")
+    @Column(name = "cupo_limite")
     private Integer cupoLimite;
 
     /** Tasa de interés anual aplicable a la cuenta. */
-    @Column(nullable = false, name = "interes_anual")
+    @Column(name = "interes_anual")
     private Float interesAnual;
-
-
-    /** Calcula el interés generado por la caja de ahorro. */
-    public void calcularInteres(){}
 }
