@@ -5,6 +5,7 @@ TRUNCATE TABLE cuentas_cotitulares;
 TRUNCATE TABLE transacciones;
 TRUNCATE TABLE cuentas_bancarias;
 TRUNCATE TABLE clientes;
+TRUNCATE TABLE parametros_globales;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -64,3 +65,12 @@ VALUES
     (UUID_TO_BIN('f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a66'), CURDATE(), CURTIME(),
      12000.50, 'EXTRACCION', 'COMPLETADA',
      UUID_TO_BIN('d1eebc99-9c0b-4ef8-bb6d-6bb9bd380a44'), NOW(), NOW());
+
+-- 4. Inserción de parámetros globales del sistema
+INSERT INTO parametros_globales
+    (clave, valor, tipo_dato, categoria, unidad, descripcion, activo, fecha_creacion, fecha_ultima_modificacion)
+VALUES
+    ('COMISION_CAJA_AHORRO', '2000.00', 'DECIMAL', 'COMISIONES', 'ARS', 'Mantenimiento mensual fijo para Caja de Ahorro', 1, NOW(), NOW()),
+    ('COMISION_CUENTA_CORRIENTE', '5000.00', 'DECIMAL', 'COMISIONES', 'ARS', 'Mantenimiento mensual fijo para Cuenta Corriente', 1, NOW(), NOW()),
+    ('LIMITE_EXTRACCION_TITULAR', '100000.00', 'DECIMAL', 'LIMITES', 'ARS', 'Límite global diario acumulado para extracciones de titulares', 1, NOW(), NOW()),
+    ('LIMITE_EXTRACCION_ADHERENTE', '70000.00', 'DECIMAL', 'LIMITES', 'ARS', 'Límite global diario acumulado para extracciones de adherentes', 1, NOW(), NOW());
