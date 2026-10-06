@@ -17,6 +17,7 @@ public class TokenActivacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", columnDefinition = "BINARY(16)", length = 16, updatable = false, nullable = false)
     private UUID id;
 
     @Column(nullable = false, unique = true)
@@ -26,7 +27,7 @@ public class TokenActivacion {
     private LocalDateTime fechaExpiracion;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cliente_id", nullable = false, unique = true)
+    @JoinColumn(name = "cliente_id", columnDefinition = "BINARY(16)", nullable = false, unique = true)
     private Cliente cliente;
 
     public boolean estaExpirado() {
