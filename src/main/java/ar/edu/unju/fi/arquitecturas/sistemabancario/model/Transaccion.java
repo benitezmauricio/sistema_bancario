@@ -29,6 +29,7 @@ public class Transaccion extends AuditableEntity{
     /** Identificador único de la transacción. */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", columnDefinition = "BINARY(16)", length = 16, updatable = false, nullable = false)
     private UUID id;
 
     /** Fecha en la que se realizó la transacción. */
@@ -54,7 +55,7 @@ public class Transaccion extends AuditableEntity{
 
     /** Cuenta bancaria sobre la que se realizó la operación. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "cuenta_bancaria_id", nullable = false)
+    @JoinColumn(name = "cuenta_bancaria_id", columnDefinition = "BINARY(16)", nullable = false)
     private CuentaBancaria cuentaBancaria;
 
     /** Consulta la información de la transacción. */

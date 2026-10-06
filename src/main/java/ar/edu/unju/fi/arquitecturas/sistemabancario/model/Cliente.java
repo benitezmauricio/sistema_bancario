@@ -32,6 +32,7 @@ public class Cliente extends AuditableEntity {
     /** Identificador único del cliente. */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", columnDefinition = "BINARY(16)", length = 16, updatable = false, nullable = false)
     private UUID id;
 
     /** Nombre completo del cliente. */
