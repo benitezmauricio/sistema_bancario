@@ -25,7 +25,7 @@ public class TokenActivacion {
     @Column(nullable = false)
     private LocalDateTime fechaExpiracion;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cliente_id", nullable = false, unique = true)
     private Cliente cliente;
 
