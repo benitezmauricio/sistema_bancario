@@ -22,7 +22,7 @@ import java.util.UUID;
 @Table(name = "cuentas_bancarias")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_cuenta", discriminatorType = DiscriminatorType.STRING, length = 30)
-/* Activa el borrado lógico de la tabla **/
+/** Activa el borrado lógico de la tabla **/
 @SoftDelete(columnName = "fecha_baja", strategy = SoftDeleteType.TIMESTAMP)
 
 @Getter
@@ -33,6 +33,7 @@ public abstract class CuentaBancaria extends AuditableEntity {
     /** Identificador único de la cuenta bancaria. */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", columnDefinition = "BINARY(16)", length = 16, updatable = false, nullable = false)
     private UUID id;
 
     /** Código Bancario Uniforme de la cuenta. */
@@ -54,15 +55,15 @@ public abstract class CuentaBancaria extends AuditableEntity {
 
     /** Cliente titular principal de la cuenta bancaria. Mapeado EAGER por @SoftDelete en Cliente. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "titular_id", nullable = false)
+    @JoinColumn(name = "titular_id", columnDefinition = "BINARY(16)", nullable = false)
     private Cliente titular;
 
     /** Clientes cotitulares adicionales adheridos a la cuenta. */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "cuentas_cotitulares",
-            joinColumns = @JoinColumn(name = "cuenta_id"),
-            inverseJoinColumns = @JoinColumn(name = "cliente_id")
+            joinColumns = @JoinColumn(name = "cuenta_id", columnDefinition = "BINARY(16)"),
+            inverseJoinColumns = @JoinColumn(name = "cliente_id", columnDefinition = "BINARY(16)")
     )
     private List<Cliente> cotitulares = new ArrayList<>();
 

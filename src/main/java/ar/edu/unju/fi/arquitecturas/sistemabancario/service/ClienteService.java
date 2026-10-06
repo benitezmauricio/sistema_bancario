@@ -15,4 +15,6 @@ public interface ClienteService {
     List<Cliente> buscarPorNombre(String nombre);
     Cliente actualizarCliente(UUID id, Cliente clienteActualizado);
     void eliminarCliente(UUID id);
+
+    void activarCliente(String token);
 }

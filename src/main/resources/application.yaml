@@ -20,6 +20,18 @@ spring:
     show-sql: true
     open-in-view: false
 
+  # CONFIGURACIÓN DE CORREO
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:no-reply@banco.com}
+    password: ${MAIL_PASSWORD:clave_temporal}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 app:
   comisiones:
     caja-ahorro: 2000.00

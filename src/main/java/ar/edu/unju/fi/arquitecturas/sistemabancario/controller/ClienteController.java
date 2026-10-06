@@ -7,10 +7,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/clientes")
@@ -23,5 +22,11 @@ public class ClienteController {
     public ResponseEntity<ClienteResponseDto> registrarCliente(@Valid @RequestBody ClienteRequestDto request) {
         ClienteResponseDto response = clienteService.registrarCliente(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/activar")
+    public ResponseEntity<Map<String, String>> activarCliente(@RequestParam String token) {
+        clienteService.activarCliente(token);
+        return ResponseEntity.ok(Map.of("mensaje", "Cliente activado con éxito"));
     }
 }

@@ -1,11 +1,13 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
 
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.Parentesco;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCliente;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SoftDelete;
 import org.hibernate.annotations.SoftDeleteType;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +32,7 @@ public class Cliente extends AuditableEntity {
     /** Identificador único del cliente. */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", columnDefinition = "BINARY(16)", length = 16, updatable = false, nullable = false)
     private UUID id;
 
     /** Nombre completo del cliente. */
@@ -52,6 +55,19 @@ public class Cliente extends AuditableEntity {
     @Column(nullable = false)
     private String direccion;
 
+    /** Estado del cliente (ACTIVO, INACTIVO, BLOQUEADO). */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_cliente", nullable = false, length = 30)
+    private EstadoCliente estadoCliente;
+
+    /**
+     * Vínculo de parentesco con el titular (CONYUGE, HIJO).
+     * Aplica únicamente si el cliente es un adherente.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "parentesco", length = 20)
+    private Parentesco parentesco;
+
     /** Cuentas en las que participa como cotitular. */
     @Builder.Default
     @ManyToMany(mappedBy = "cotitulares", fetch = FetchType.LAZY)
@@ -72,12 +88,4 @@ public class Cliente extends AuditableEntity {
     @Builder.Default
     @OneToMany(mappedBy = "titular", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Cliente> adherentes = new ArrayList<>();
-
-    /**
-     * Vínculo de parentesco con el titular (CONYUGE, HIJO).
-     * Aplica únicamente si el cliente es un adherente.
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "parentesco", length = 20)
-    private Parentesco parentesco;
 }
