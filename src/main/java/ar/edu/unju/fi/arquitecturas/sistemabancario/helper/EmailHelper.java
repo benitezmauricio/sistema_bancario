@@ -47,7 +47,7 @@ public class EmailHelper {
 
             mailSender.send(mensaje);
             log.info("Correo de activación enviado exitosamente a {}", destinatario);
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             log.error("Fallo al construir o enviar el correo a {}: {}", destinatario, e.getMessage());
         }
     }
