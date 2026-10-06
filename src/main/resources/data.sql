@@ -19,7 +19,7 @@ VALUES
     (UUID_TO_BIN('a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a03'), 'Carlos Rodríguez', '20-345678-4',
      'carlos.rodriguez@email.com', '4255566', 'San Martín 789','ACTIVO', NOW(), NOW()),
     (UUID_TO_BIN('a2eebc99-9c0b-4ef8-bb6d-6bb9bd380a04'), 'Ana Martínez', '27-356789-5',
-     'ana.martinez@email.com', '4266677', 'Güemes 321', 'ACTIVO','ACTIVO',NOW(), NOW()),
+     'ana.martinez@email.com', '4266677', 'Güemes 321', 'ACTIVO',NOW(), NOW()),
     (UUID_TO_BIN('a3eebc99-9c0b-4ef8-bb6d-6bb9bd380a05'), 'Lucas Fernández', '20-367890-6',
      'lucas.fernandez@email.com', '4277788', 'Alvear 654', 'ACTIVO',NOW(), NOW()),
     (UUID_TO_BIN('a4eebc99-9c0b-4ef8-bb6d-6bb9bd380a06'), 'Sofía López', '27-378901-7',

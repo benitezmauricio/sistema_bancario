@@ -9,4 +9,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ClienteCreadoEvent {
     private final Cliente cliente;
+    private final String token;
 }

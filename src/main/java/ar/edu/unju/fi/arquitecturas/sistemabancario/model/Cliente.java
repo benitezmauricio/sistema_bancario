@@ -65,11 +65,5 @@ public class Cliente extends AuditableEntity {
     @Column(name = "estado_cliente", nullable = false, length = 30)
     private EstadoCliente estadoCliente;
 
-    @Column(name = "token_activacion", unique = true)
-    private String tokenActivacion;
-
-    @Column(name = "fecha_expiracion_token")
-    private LocalDateTime fechaExpiracionToken;
-
 }
 

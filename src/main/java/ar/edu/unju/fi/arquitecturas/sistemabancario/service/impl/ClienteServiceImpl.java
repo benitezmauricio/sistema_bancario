@@ -4,8 +4,10 @@ import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.ClienteRequestDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.ClienteResponseDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.event.ClienteCreadoEvent;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.Cliente;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.TokenActivacion;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCliente;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.ClienteRepository;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.TokenActivacionRepository;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.service.ClienteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -22,6 +24,7 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class ClienteServiceImpl implements ClienteService {
     private final ClienteRepository clienteRepository;
+    private final TokenActivacionRepository tokenActivacionRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
@@ -31,7 +34,6 @@ public class ClienteServiceImpl implements ClienteService {
             throw new IllegalArgumentException("Ya existe un cliente registrado con el correo: " + dto.getMail());
         }
 
-        // Crear en estado PENDIENTE_ACTIVACION con token de 24 horas
         Cliente cliente = Cliente.builder()
                 .nombre(dto.getNombre())
                 .cuil(dto.getCuil())
@@ -39,13 +41,19 @@ public class ClienteServiceImpl implements ClienteService {
                 .telefono(dto.getTelefono())
                 .direccion(dto.getDireccion())
                 .estadoCliente(EstadoCliente.PENDIENTE_ACTIVACION)
-                .tokenActivacion(UUID.randomUUID().toString())
-                .fechaExpiracionToken(LocalDateTime.now().plusHours(24))
                 .build();
 
         Cliente persistido = clienteRepository.save(cliente);
 
-        eventPublisher.publishEvent(new ClienteCreadoEvent(persistido));
+        String tokenString = UUID.randomUUID().toString();
+        TokenActivacion tokenActivacion = TokenActivacion.builder()
+                .token(tokenString)
+                .cliente(persistido)
+                .fechaExpiracion(LocalDateTime.now().plusHours(24))
+                .build();
+        tokenActivacionRepository.save(tokenActivacion);
+
+        eventPublisher.publishEvent(new ClienteCreadoEvent(persistido, tokenString));
 
         return ClienteResponseDto.builder()
                 .id(persistido.getId())
@@ -64,20 +72,22 @@ public class ClienteServiceImpl implements ClienteService {
             throw new IllegalArgumentException("El token de activación no puede estar vacío");
         }
 
-        Cliente cliente = clienteRepository.findByTokenActivacion(token)
+        TokenActivacion tokenActivacion = tokenActivacionRepository.findByToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("Token de activación inválido o inexistente"));
 
-        if (cliente.getFechaExpiracionToken().isBefore(LocalDateTime.now())) {
+        if (tokenActivacion.estaExpirado()) {
             throw new IllegalArgumentException("El token de activación ha expirado");
         }
 
+        Cliente cliente = tokenActivacion.getCliente();
         if (cliente.getEstadoCliente() == EstadoCliente.ACTIVO) {
             throw new IllegalArgumentException("El cliente ya se encuentra activo");
         }
 
         cliente.setEstadoCliente(EstadoCliente.ACTIVO);
-        cliente.setTokenActivacion(null); // clear token para evitar reusarlo
         clienteRepository.save(cliente);
+
+        tokenActivacionRepository.delete(tokenActivacion);
     }
 
     //implementar con red only--

@@ -23,7 +23,7 @@ public class ClienteEventListener {
         emailHelper.enviarCorreoActivacion(
                 cliente.getMail(),
                 cliente.getNombre(),
-                cliente.getTokenActivacion()
+                event.getToken()
         );
     }
 }
