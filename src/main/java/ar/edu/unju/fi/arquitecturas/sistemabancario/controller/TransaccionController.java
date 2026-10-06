@@ -1,5 +1,6 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.controller;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.ExtraccionRequestDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionRequestDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionResponseDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.service.TransaccionService;
@@ -24,6 +25,14 @@ public class TransaccionController {
             @Valid @RequestBody TransaccionRequestDto request) {
 
         TransaccionResponseDto respuesta = transaccionService.realizarTransferencia(request);
+        return ResponseEntity.status(HttpStatus.OK).body(respuesta);
+    }
+
+    @PostMapping("/extraer")
+    public ResponseEntity<TransaccionResponseDto> realizarExtraccion(
+            @Valid @RequestBody ExtraccionRequestDto request) {
+
+        TransaccionResponseDto respuesta = transaccionService.realizarExtraccionConTope(request);
         return ResponseEntity.status(HttpStatus.OK).body(respuesta);
     }
 }

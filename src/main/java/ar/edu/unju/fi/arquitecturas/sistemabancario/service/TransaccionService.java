@@ -1,5 +1,6 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.service;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.ExtraccionRequestDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionRequestDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionResponseDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.Transaccion;
@@ -13,6 +14,8 @@ public interface TransaccionService {
     Transaccion realizarDeposito(UUID cuentaId, BigDecimal monto);
 
     Transaccion realizarExtraccion(UUID cuentaId, BigDecimal monto);
+
+    TransaccionResponseDto realizarExtraccionConTope(ExtraccionRequestDto dto);
 
     TransaccionResponseDto realizarTransferencia(TransaccionRequestDto dto);
 

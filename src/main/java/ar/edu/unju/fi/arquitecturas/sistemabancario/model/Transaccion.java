@@ -13,8 +13,8 @@ import java.util.UUID;
 /**
  * Representa una operación realizada sobre una cuenta bancaria.
  *
- * <p>Registra el importe, el tipo, el estado y los datos temporales
- * de la operación.</p>
+ * <p>Registra el importe, el tipo, el estado, la persona ejecutora
+ * y los datos temporales de la operación.</p>
  */
 @Entity
 @Getter
@@ -23,8 +23,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
-public class Transaccion extends AuditableEntity{
+public class Transaccion extends AuditableEntity {
 
     /** Identificador único de la transacción. */
     @Id
@@ -51,11 +50,18 @@ public class Transaccion extends AuditableEntity{
     @Column(name="estado_transaccion", nullable = false, length = 20)
     private EstadoTransaccion estadoTransaccion;
 
-
     /** Cuenta bancaria sobre la que se realizó la operación. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "cuenta_bancaria_id", nullable = false)
     private CuentaBancaria cuentaBancaria;
+
+    /**
+     * Cliente que ejecutó la operación (titular o adherente).
+     * Mapeado EAGER debido a que Cliente tiene habilitado @SoftDelete.
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "cliente_ejecutor_id")
+    private Cliente clienteEjecutor;
 
     /** Consulta la información de la transacción. */
     public void consultarTransaccion() {}
