@@ -3,6 +3,8 @@ package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCliente;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.SoftDeleteType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "clientes")
+@SoftDelete(columnName = "fecha_baja", strategy = SoftDeleteType.TIMESTAMP)
+
 @Getter
 @Setter
 @NoArgsConstructor
