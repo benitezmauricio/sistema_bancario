@@ -1,0 +1,704 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Módulo predeterminado",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/cuentas/cbu/0000003100000000000001": {
+      "get": {
+        "summary": "Obtener por cbu",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/cuentas": {
+      "get": {
+        "summary": "listar por estado",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "estado",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": [
+              "SUSPENDIDA"
+            ],
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "content": [
+                    {
+                      "alias": "JUAN.PEREZ.ARS",
+                      "cbu": "0000003100000000000001",
+                      "costoComision": null,
+                      "cotitulares": [],
+                      "cupoLimite": 500000,
+                      "estadoCuenta": "ACTIVA",
+                      "id": "c1eebc99-9c0b-4ef8-bb6d-6bb9bd380a33",
+                      "interesAnual": 35.5,
+                      "margen": null,
+                      "saldo": 150000.5,
+                      "tipoCuenta": "CAJA_DE_AHORRO",
+                      "titular": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+                    },
+                    {
+                      "alias": "CARLOS.RODRIGUEZ",
+                      "cbu": "0000003100000000000003",
+                      "costoComision": null,
+                      "cotitulares": [],
+                      "cupoLimite": 600000,
+                      "estadoCuenta": "ACTIVA",
+                      "id": "c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a55",
+                      "interesAnual": 38,
+                      "margen": null,
+                      "saldo": 210500,
+                      "tipoCuenta": "CAJA_DE_AHORRO",
+                      "titular": "a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a03"
+                    },
+                    {
+                      "alias": "LUCAS.FERNANDEZ",
+                      "cbu": "0000003100000000000005",
+                      "costoComision": null,
+                      "cotitulares": [],
+                      "cupoLimite": 400000,
+                      "estadoCuenta": "ACTIVA",
+                      "id": "c3eebc99-9c0b-4ef8-bb6d-6bb9bd380a77",
+                      "interesAnual": 35,
+                      "margen": null,
+                      "saldo": 98000.25,
+                      "tipoCuenta": "CAJA_DE_AHORRO",
+                      "titular": "a3eebc99-9c0b-4ef8-bb6d-6bb9bd380a05"
+                    },
+                    {
+                      "alias": "MARIA.GOMEZ.ARS",
+                      "cbu": "0000003100000000000002",
+                      "costoComision": 1500,
+                      "cotitulares": [],
+                      "cupoLimite": null,
+                      "estadoCuenta": "ACTIVA",
+                      "id": "d1eebc99-9c0b-4ef8-bb6d-6bb9bd380a44",
+                      "interesAnual": null,
+                      "margen": 100000,
+                      "saldo": 320000.75,
+                      "tipoCuenta": "CUENTA_CORRIENTE",
+                      "titular": "b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a22"
+                    },
+                    {
+                      "alias": "ANA.MARTINEZ.CC",
+                      "cbu": "0000003100000000000004",
+                      "costoComision": 2200,
+                      "cotitulares": [],
+                      "cupoLimite": null,
+                      "estadoCuenta": "ACTIVA",
+                      "id": "d2eebc99-9c0b-4ef8-bb6d-6bb9bd380a66",
+                      "interesAnual": null,
+                      "margen": 250000,
+                      "saldo": 540000,
+                      "tipoCuenta": "CUENTA_CORRIENTE",
+                      "titular": "a2eebc99-9c0b-4ef8-bb6d-6bb9bd380a04"
+                    }
+                  ],
+                  "empty": false,
+                  "first": true,
+                  "last": true,
+                  "number": 0,
+                  "numberOfElements": 5,
+                  "pageable": {
+                    "offset": 0,
+                    "pageNumber": 0,
+                    "pageSize": 10,
+                    "paged": true,
+                    "sort": {
+                      "empty": false,
+                      "sorted": true,
+                      "unsorted": false
+                    },
+                    "unpaged": false
+                  },
+                  "size": 10,
+                  "sort": {
+                    "empty": false,
+                    "sorted": true,
+                    "unsorted": false
+                  },
+                  "totalElements": 5,
+                  "totalPages": 1
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Crear cuenta",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "cbu": "0000003100000000000011",
+                "alias": "NUEVA.CUENTA.ARR",
+                "saldo": 50000,
+                "estadoCuenta": "SUSPENDIDA",
+                "titular": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+                "cotitulares": null,
+                "tipoCuenta": "CAJA_DE_AHORRO",
+                "cupoLimite": 500000,
+                "interesAnual": 35.5
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "alias": "NUEVA.CUENTA.ARR",
+                  "cbu": "0000003100000000000011",
+                  "costoComision": null,
+                  "cotitulares": [],
+                  "cupoLimite": 500000,
+                  "estadoCuenta": "ACTIVA",
+                  "id": "e526b43a-f067-4db8-96b3-70c849ab3ff5",
+                  "interesAnual": 35.5,
+                  "margen": null,
+                  "saldo": 50000,
+                  "tipoCuenta": "CAJA_DE_AHORRO",
+                  "titular": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/cuentas/c1eebc99-9c0b-4ef8-bb6d-6bb9bd380a33": {
+      "get": {
+        "summary": "Obtener por id",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "alias": "LUCAS.FERNANDEZ",
+                  "cbu": "0000003100000000000005",
+                  "costoComision": null,
+                  "cotitulares": [],
+                  "cupoLimite": 400000,
+                  "estadoCuenta": "ACTIVA",
+                  "id": "c3eebc99-9c0b-4ef8-bb6d-6bb9bd380a77",
+                  "interesAnual": 35,
+                  "margen": null,
+                  "saldo": 98000.25,
+                  "tipoCuenta": "CAJA_DE_AHORRO",
+                  "titular": "a3eebc99-9c0b-4ef8-bb6d-6bb9bd380a05"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "Eliminar por id",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "error": "Not Found",
+                  "fieldErrors": null,
+                  "message": "Cuenta bancaria no encontrada con ID: b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a22",
+                  "path": "/api/v1/cuentas/b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a22",
+                  "status": 404,
+                  "timestamp": "2026-10-05T01:04:01.497998800Z"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/cuentas/alias/ANA.MARTINEZ.CC": {
+      "get": {
+        "summary": "Obtener por alias",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "alias": "ANA.MARTINEZ.CC",
+                  "cbu": "0000003100000000000004",
+                  "costoComision": 2200,
+                  "cotitulares": [],
+                  "cupoLimite": null,
+                  "estadoCuenta": "ACTIVA",
+                  "id": "d2eebc99-9c0b-4ef8-bb6d-6bb9bd380a66",
+                  "interesAnual": null,
+                  "margen": 250000,
+                  "saldo": 540000,
+                  "tipoCuenta": "CUENTA_CORRIENTE",
+                  "titular": "a2eebc99-9c0b-4ef8-bb6d-6bb9bd380a04"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/cuentas/c3eebc99-9c0b-4ef8-bb6d-6bb9bd380a77": {
+      "patch": {
+        "summary": "Editar caja de ahorro por id",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "cupoLimite": 250000,
+                "interesAnual": 20.5
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/cuentas/cbu/0000003100000000000002": {
+      "patch": {
+        "summary": "Editar cuenta corriente por cbu",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": "{\r\n  \"margen\": 300000.0,\r\n  \"costoComision\": 1800.0,\r\n  /* \"cotitulares\": [\r\n    \"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d\",\r\n    \"1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d\"\r\n  ] */\r\n}"
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "alias": "MARIA.GOMEZ.ARS",
+                  "cbu": "0000003100000000000002",
+                  "costoComision": 1800,
+                  "cotitulares": [],
+                  "cupoLimite": null,
+                  "estadoCuenta": "ACTIVA",
+                  "id": "d1eebc99-9c0b-4ef8-bb6d-6bb9bd380a44",
+                  "interesAnual": null,
+                  "margen": 300000,
+                  "saldo": 320000.75,
+                  "tipoCuenta": "CUENTA_CORRIENTE",
+                  "titular": "b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a22"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/cuentas/cbu/0000003100000000000004": {
+      "patch": {
+        "summary": "Editar caja de ahorro por cbu",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "alias": "MARIA.AHORRO.2026",
+                "estadoCuenta": "SUSPENDIDA",
+                "cupoLimite": 250000,
+                "interesAnual": 42.5
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "error": "Bad Request",
+                  "fieldErrors": null,
+                  "message": "Invalid UUID string: 0000003100000000000004",
+                  "path": "/api/v1/cuentas/0000003100000000000004",
+                  "status": 400,
+                  "timestamp": "2026-10-05T00:48:04.981622Z"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/cuentas/cbu/0000003100000000000011": {
+      "delete": {
+        "summary": "Elimicar cuenta por cbu",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "error": "Not Found",
+                  "fieldErrors": null,
+                  "message": "Cuenta bancaria no encontrada con CBU: 0000003100000000000011",
+                  "path": "/api/v1/cuentas/cbu/0000003100000000000011",
+                  "status": 404,
+                  "timestamp": "2026-10-05T00:51:04.081838300Z"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "get": {
+        "summary": "Obtener por cbu",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "patch": {
+        "summary": "Editar caja de ahorro",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "cupoLimite": 250000,
+                "interesAnual": 20.5
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "alias": "MARIA.GOMEZ.ARS",
+                  "cbu": "0000003100000000000002",
+                  "costoComision": 1800,
+                  "cotitulares": [],
+                  "cupoLimite": null,
+                  "estadoCuenta": "ACTIVA",
+                  "id": "d1eebc99-9c0b-4ef8-bb6d-6bb9bd380a44",
+                  "interesAnual": null,
+                  "margen": 300000,
+                  "saldo": 320000.75,
+                  "tipoCuenta": "CUENTA_CORRIENTE",
+                  "titular": "b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a22"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/clientes": {
+      "post": {
+        "summary": "Registrar Cliente",
+        "deprecated": false,
+        "description": "Respuesta esperada:\n- Código HTTP: 201 Created\n- Body: Objeto JSON del cliente registrado con estado PENDIENTE_ACTIVACION.",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "nombre": "Juan Perez",
+                "cuil": "20384759601",
+                "mail": "juan.perez@example.com",
+                "telefono": "+5493881234567",
+                "direccion": "Av. Fascio 123, San Salvador de Jujuy"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/clientes/activar": {
+      "get": {
+        "summary": "Activar Cliente (por Token)",
+        "deprecated": false,
+        "description": "Activa la cuenta de un cliente previamente registrado mediante su token de verificación.\n\nParámetros requeridos:\n- token (Query param): UUID del token generado durante el registro del cliente (revisar en el log de consola del envío de correo o en la tabla tokens_activacion).\n\nRespuestas esperadas:\n- 200 OK: Cliente activado con éxito ({\"mensaje\": \"Cliente activado con éxito\"}).\n- 400 Bad Request: Token inválido, expirado o inexistente.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "a8aa8b55-713a-4ff6-8d51-5fc1d5ab4e30",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/transacciones/transferir": {
+      "post": {
+        "summary": "Realizar Transferencia",
+        "deprecated": false,
+        "description": "Respuesta esperada: 200 OK con el detalle de la transacción generada",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "cbuOrigen": "1234567890123456789012",
+                "cbuDestino": "9876543210987654321098",
+                "monto": 15000,
+                "descripcion": "Pago de alquiler"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "responses": {},
+    "securitySchemes": {}
+  },
+  "servers": [],
+  "security": []
+}
