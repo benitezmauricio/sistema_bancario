@@ -34,6 +34,15 @@ public class ClienteServiceImpl implements ClienteService {
             throw new IllegalArgumentException("Ya existe un cliente registrado con el correo: " + dto.getMail());
         }
 
+        Cliente titular = null;
+        if (dto.getTitularId() != null) {
+            titular = clienteRepository.findById(dto.getTitularId())
+                    .orElseThrow(() -> new IllegalArgumentException("No existe el cliente titular con ID: " + dto.getTitularId()));
+            if (dto.getParentesco() == null) {
+                throw new IllegalArgumentException("El parentesco es obligatorio para registrar un adherente");
+            }
+        }
+
         Cliente cliente = Cliente.builder()
                 .nombre(dto.getNombre())
                 .cuil(dto.getCuil())
@@ -41,6 +50,8 @@ public class ClienteServiceImpl implements ClienteService {
                 .telefono(dto.getTelefono())
                 .direccion(dto.getDireccion())
                 .estadoCliente(EstadoCliente.PENDIENTE_ACTIVACION)
+                .titular(titular)
+                .parentesco(dto.getParentesco())
                 .build();
 
         Cliente persistido = clienteRepository.save(cliente);
@@ -62,6 +73,8 @@ public class ClienteServiceImpl implements ClienteService {
                 .mail(persistido.getMail())
                 .telefono(persistido.getTelefono())
                 .direccion(persistido.getDireccion())
+                .parentesco(persistido.getParentesco())
+                .titularId(persistido.getTitular() != null ? persistido.getTitular().getId() : null)
                 .build();
     }
 
@@ -122,6 +135,8 @@ public class ClienteServiceImpl implements ClienteService {
         existente.setMail(clienteActualizado.getMail());
         existente.setTelefono(clienteActualizado.getTelefono());
         existente.setDireccion(clienteActualizado.getDireccion());
+        existente.setParentesco(clienteActualizado.getParentesco());
+        existente.setTitular(clienteActualizado.getTitular());
 
         return clienteRepository.save(existente);
     }

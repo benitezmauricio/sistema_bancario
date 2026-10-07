@@ -1,5 +1,6 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.model;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.Parentesco;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCliente;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,19 +15,18 @@ import java.util.UUID;
 /**
  * Representa a un cliente del sistema bancario.
  *
- * <p>Un cliente puede poseer una o más cuentas bancarias y sus datos
- * de auditoría se heredan de {@link AuditableEntity}.</p>
+ * <p>Un cliente puede poseer una o más cuentas bancarias, ser titular,
+ * tener adherentes vinculados (grupo familiar) o actuar como adherente de otro titular.</p>
  */
 @Entity
 @Table(name = "clientes")
+/* Activa el borrado lógico en la tabla clientes */
 @SoftDelete(columnName = "fecha_baja", strategy = SoftDeleteType.TIMESTAMP)
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Cliente extends AuditableEntity {
 
     /** Identificador único del cliente. */
@@ -55,20 +55,37 @@ public class Cliente extends AuditableEntity {
     @Column(nullable = false)
     private String direccion;
 
+    /** Estado del cliente (ACTIVO, INACTIVO, BLOQUEADO). */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_cliente", nullable = false, length = 30)
+    private EstadoCliente estadoCliente;
+
+    /**
+     * Vínculo de parentesco con el titular (CONYUGE, HIJO).
+     * Aplica únicamente si el cliente es un adherente.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "parentesco", length = 20)
+    private Parentesco parentesco;
+
     /** Cuentas en las que participa como cotitular. */
     @Builder.Default
     @ManyToMany(mappedBy = "cotitulares", fetch = FetchType.LAZY)
     private List<CuentaBancaria> cuentasCotitular = new ArrayList<>();
 
-    /** Registra un nuevo cliente en el sistema. */
-    public void registrarCLiente(){}
+    /**
+     * Cliente titular al que se vincula este cliente si es adherente.
+     * Es null si el cliente es titular independiente.
+     * Se mapea con FetchType.EAGER debido a que Cliente tiene habilitado @SoftDelete.
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "titular_id")
+    private Cliente titular;
 
-    /** Registra un cotitular asociado al cliente. */
-    public void registrarCotitular(){}
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "estado_cliente", nullable = false, length = 30)
-    private EstadoCliente estadoCliente;
-
+    /**
+     * Lista de adherentes (cónyuge, hijos) vinculados a este titular.
+     */
+    @Builder.Default
+    @OneToMany(mappedBy = "titular", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Cliente> adherentes = new ArrayList<>();
 }
-

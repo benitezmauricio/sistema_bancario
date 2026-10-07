@@ -1,14 +1,16 @@
 package ar.edu.unju.fi.arquitecturas.sistemabancario.service;
 
+import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.ExtraccionRequestDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionRequestDto;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.dto.TransaccionResponseDto;
-import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CajaDeAhorro;
-import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaBancaria;
-import ar.edu.unju.fi.arquitecturas.sistemabancario.model.CuentaCorriente;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.exception.LimiteExtraccionExcedidoException;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.*;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoCuenta;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.EstadoTransaccion;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.Parentesco;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.model.enums.TipoTransaccion;
-import ar.edu.unju.fi.arquitecturas.sistemabancario.model.Transaccion;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.ClienteRepository;
+import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.ControlDiarioExtraccionRepository;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.CuentaBancariaRepository;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.repository.TransaccionRepository;
 import ar.edu.unju.fi.arquitecturas.sistemabancario.service.impl.TransaccionServiceImpl;
@@ -20,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,21 +33,27 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class TransaccionServiceTest {
 
-    // 1. Simulacion de repositorios
     @Mock
     private TransaccionRepository transaccionRepository;
 
     @Mock
     private CuentaBancariaRepository cuentaBancariaRepository;
 
-    // 2. Inyeccion del servicio real con los repositorios simulados
+    @Mock
+    private ClienteRepository clienteRepository;
+
+    @Mock
+    private ControlDiarioExtraccionRepository controlDiarioExtraccionRepository;
+
+    @Mock
+    private ParametroGlobalService parametroGlobalService;
+
     @InjectMocks
     private TransaccionServiceImpl transaccionService;
 
     @Test
     @DisplayName("Debe realizar depósito incrementando el saldo y guardando la transacción")
     void realizarDeposito_CuandoMontoEsValido_DebeIncrementarSaldo() {
-        // 1-ARRANGE (preparar cuenta y simular busqueda)
         UUID cuentaId = UUID.randomUUID();
         CajaDeAhorro cuenta = new CajaDeAhorro();
         cuenta.setId(cuentaId);
@@ -54,10 +63,8 @@ public class TransaccionServiceTest {
         when(cuentaBancariaRepository.save(any(CuentaBancaria.class))).thenReturn(cuenta);
         when(transaccionRepository.save(any(Transaccion.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // 2-ACT (depositar 50)
         Transaccion resultado = transaccionService.realizarDeposito(cuentaId, new BigDecimal("50.00"));
 
-        // 3-ASSERT (verificar que el saldo subio a 150)
         assertNotNull(resultado);
         assertEquals(new BigDecimal("150.00"), cuenta.getSaldo());
         assertEquals(TipoTransaccion.DEPOSITO, resultado.getTipo());
@@ -69,7 +76,6 @@ public class TransaccionServiceTest {
     @Test
     @DisplayName("Debe lanzar excepción al intentar extraer más dinero del saldo disponible")
     void realizarExtraccion_CuandoSaldoInsuficiente_DebeLanzarExcepcion() {
-        // 1-ARRANGE (preparar cuenta con poco saldo)
         UUID cuentaId = UUID.randomUUID();
         CajaDeAhorro cuenta = new CajaDeAhorro();
         cuenta.setId(cuentaId);
@@ -77,7 +83,6 @@ public class TransaccionServiceTest {
 
         when(cuentaBancariaRepository.findById(cuentaId)).thenReturn(Optional.of(cuenta));
 
-        // 2-ACT y 3-ASSERT (extraer 200 debe fallar)
         assertThrows(RuntimeException.class, () -> transaccionService.realizarExtraccion(cuentaId, new BigDecimal("200.00")));
         verify(cuentaBancariaRepository, never()).save(any(CuentaBancaria.class));
         verify(transaccionRepository, never()).save(any(Transaccion.class));
@@ -86,7 +91,6 @@ public class TransaccionServiceTest {
     @Test
     @DisplayName("Debe realizar transferencia descontando del origen y sumando al destino")
     void realizarTransferencia_CuandoDatosSonValidos_DebeActualizarAmbosSaldos() {
-        // 1-ARRANGE (preparar dos cuentas y el DTO)
         UUID origenId = UUID.randomUUID();
         UUID destinoId = UUID.randomUUID();
 
@@ -107,10 +111,8 @@ public class TransaccionServiceTest {
         when(cuentaBancariaRepository.findById(origenId)).thenReturn(Optional.of(origen));
         when(cuentaBancariaRepository.findById(destinoId)).thenReturn(Optional.of(destino));
 
-        // 2-ACT
         TransaccionResponseDto respuesta = transaccionService.realizarTransferencia(requestDto);
 
-        // 3-ASSERT (verificar los nuevos saldos y la respuesta)
         assertNotNull(respuesta);
         assertEquals(new BigDecimal("300.00"), origen.getSaldo());
         assertEquals(new BigDecimal("300.00"), destino.getSaldo());
@@ -121,9 +123,83 @@ public class TransaccionServiceTest {
     }
 
     @Test
+    @DisplayName("Debe realizar extracción con tope para titular cuando no supera límite global")
+    void realizarExtraccionConTope_Titular_CuandoDentroDeLimite_DebeCompletar() {
+        UUID titularId = UUID.randomUUID();
+        Cliente titular = Cliente.builder().id(titularId).nombre("Juan").build();
+
+        UUID cuentaId = UUID.randomUUID();
+        CajaDeAhorro cuenta = new CajaDeAhorro();
+        cuenta.setId(cuentaId);
+        cuenta.setTitular(titular);
+        cuenta.setEstadoCuenta(EstadoCuenta.ACTIVA);
+        cuenta.setSaldo(new BigDecimal("150000.00"));
+
+        ExtraccionRequestDto dto = ExtraccionRequestDto.builder()
+                .cuentaId(cuentaId)
+                .clienteId(titularId)
+                .monto(new BigDecimal("50000.00"))
+                .build();
+
+        when(cuentaBancariaRepository.findById(cuentaId)).thenReturn(Optional.of(cuenta));
+        when(clienteRepository.findById(titularId)).thenReturn(Optional.of(titular));
+        when(parametroGlobalService.getBigDecimal(eq("LIMITE_EXTRACCION_TITULAR"), any(BigDecimal.class)))
+                .thenReturn(new BigDecimal("100000.00"));
+        when(controlDiarioExtraccionRepository.findByClienteIdAndFecha(eq(titularId), any(LocalDate.class)))
+                .thenReturn(Optional.empty());
+
+        TransaccionResponseDto respuesta = transaccionService.realizarExtraccionConTope(dto);
+
+        assertNotNull(respuesta);
+        assertEquals(new BigDecimal("100000.00"), cuenta.getSaldo());
+        verify(controlDiarioExtraccionRepository, times(1)).save(any(ControlDiarioExtraccion.class));
+        verify(transaccionRepository, times(1)).save(any(Transaccion.class));
+    }
+
+    @Test
+    @DisplayName("Debe rechazar extracción cuando el adherente supera su límite global diario ($70.000)")
+    void realizarExtraccionConTope_Adherente_CuandoSuperaLimite_DebeLanzarExcepcion() {
+        UUID titularId = UUID.randomUUID();
+        Cliente titular = Cliente.builder().id(titularId).nombre("Juan").build();
+
+        UUID adherenteId = UUID.randomUUID();
+        Cliente adherente = Cliente.builder()
+                .id(adherenteId)
+                .nombre("Lucas")
+                .titular(titular)
+                .parentesco(Parentesco.HIJO)
+                .build();
+
+        UUID cuentaId = UUID.randomUUID();
+        CajaDeAhorro cuenta = new CajaDeAhorro();
+        cuenta.setId(cuentaId);
+        cuenta.setTitular(titular);
+        cuenta.setEstadoCuenta(EstadoCuenta.ACTIVA);
+        cuenta.setSaldo(new BigDecimal("150000.00"));
+
+        ExtraccionRequestDto dto = ExtraccionRequestDto.builder()
+                .cuentaId(cuentaId)
+                .clienteId(adherenteId)
+                .monto(new BigDecimal("80000.00"))
+                .build();
+
+        when(cuentaBancariaRepository.findById(cuentaId)).thenReturn(Optional.of(cuenta));
+        when(clienteRepository.findById(adherenteId)).thenReturn(Optional.of(adherente));
+        when(parametroGlobalService.getBigDecimal(eq("LIMITE_EXTRACCION_ADHERENTE"), any(BigDecimal.class)))
+                .thenReturn(new BigDecimal("70000.00"));
+        when(controlDiarioExtraccionRepository.findByClienteIdAndFecha(eq(adherenteId), any(LocalDate.class)))
+                .thenReturn(Optional.empty());
+
+        assertThrows(LimiteExtraccionExcedidoException.class, () ->
+                transaccionService.realizarExtraccionConTope(dto));
+
+        verify(cuentaBancariaRepository, never()).save(any(CuentaBancaria.class));
+        verify(transaccionRepository, never()).save(any(Transaccion.class));
+    }
+
+    @Test
     @DisplayName("Debe procesar débito de comisiones en cuentas activas registrando DEBITO_COMISION")
     void procesarDebitoComisionesMasivo_DebeDescontarSaldoYRegistrarTransaccion() {
-        // 1-ARRANGE
         CajaDeAhorro cajaAhorro = new CajaDeAhorro();
         cajaAhorro.setId(UUID.randomUUID());
         cajaAhorro.setSaldo(new BigDecimal("10000.00"));
@@ -143,10 +219,8 @@ public class TransaccionServiceTest {
         BigDecimal comisionAhorro = new BigDecimal("2000.00");
         BigDecimal comisionCorriente = new BigDecimal("5000.00");
 
-        // 2-ACT
         transaccionService.procesarDebitoComisionesMasivo(comisionAhorro, comisionCorriente);
 
-        // 3-ASSERT
         assertEquals(new BigDecimal("8000.00"), cajaAhorro.getSaldo());
         assertEquals(new BigDecimal("15000.00"), cuentaCorriente.getSaldo());
 

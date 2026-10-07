@@ -22,7 +22,7 @@ import java.util.UUID;
 @Table(name = "cuentas_bancarias")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_cuenta", discriminatorType = DiscriminatorType.STRING, length = 30)
-/* Activa el borrado lógico de la tabla **/
+/** Activa el borrado lógico de la tabla **/
 @SoftDelete(columnName = "fecha_baja", strategy = SoftDeleteType.TIMESTAMP)
 
 @Getter
@@ -53,8 +53,8 @@ public abstract class CuentaBancaria extends AuditableEntity {
     @Column(name = "estado_cuenta", nullable = false, length = 20)
     private EstadoCuenta estadoCuenta;
 
-    /** Cliente titular principal de la cuenta bancaria. */
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    /** Cliente titular principal de la cuenta bancaria. Mapeado EAGER por @SoftDelete en Cliente. */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "titular_id", columnDefinition = "BINARY(16)", nullable = false)
     private Cliente titular;
 

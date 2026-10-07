@@ -27,6 +27,12 @@ public class GlobalExceptionHandler {
         return respuesta(HttpStatus.BAD_REQUEST, ex.getMessage(), request, null);
     }
 
+    @ExceptionHandler(LimiteExtraccionExcedidoException.class)
+    public ResponseEntity<ErrorResponseDto> manejarLimiteExcedido(
+            LimiteExtraccionExcedidoException ex, HttpServletRequest request) {
+        return respuesta(HttpStatus.BAD_REQUEST, ex.getMessage(), request, null);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponseDto> manejarDatosInvalidos(
             IllegalArgumentException ex, HttpServletRequest request) {
